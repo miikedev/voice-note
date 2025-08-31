@@ -8,7 +8,7 @@ const Page = () => {
   return (
     <div className='w-full h-screen flex flex-col justify-center items-center'>
       <VoiceRecorder />
-      <div className='flex gap-6 mt-5'>
+      <div className='absolute top-5 flex gap-3 mt-5'>
         <LanguageSelector />
         <DurationSelector />
       </div>
