@@ -8,15 +8,15 @@ const Page = () => {
   return (
     <div className='flex flex-col gap-6 px-5 py-15'>
       <div className='flex flex-col gap-2'>
-      <h1 className='text-xl font-semibold'>Transcribed Text</h1>
-      <Textarea placeholder='Your transcribed text' className='shadow-xs rounded-sm' />
+        <h1 className='text-xl font-semibold'>Transcribed Text</h1>
+        <Textarea placeholder='Your transcribed text' className='shadow-xs rounded-sm' />
       </div>
       <div className='flex flex-col gap-2'>
-      <div className='flex justify-between'>
-      <h1 className='text-xl font-semibold'>Edit</h1>
-      <CopyTextButton text="copied text" />
-      </div>
-      <Textarea placeholder='Your edited text' className='shadow-xs rounded-sm' />
+        <div className='flex justify-between'>
+          <h1 className='text-xl font-semibold'>Edit</h1>
+          <CopyTextButton text="copied text" />
+        </div>
+        <Textarea placeholder='Your edited text' className='shadow-xs rounded-sm' />
       </div>
       <div>
         <CategorySelector />

@@ -49,7 +49,7 @@ const categories = {
 export function CategorySelector() {
   return (
     <Select>
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className="w-[200px] shadow-xs">
         <SelectValue placeholder="Select a category" />
       </SelectTrigger>
       <SelectContent>
