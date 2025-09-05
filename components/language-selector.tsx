@@ -1,5 +1,6 @@
+"use client"
 import * as React from "react";
-
+import { useAtom } from "jotai";
 import {
   Select,
   SelectContent,
@@ -9,23 +10,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { selectedLanguageAtom } from "@/app/store";
 
 // Define the languages with their corresponding values
 const languages = {
-  burmese: "Burmese",
-  english: "English",
-  japanese: "Japanese",
-  chinese: "Chinese",
-  thai: "Thai",
-  indonesian: "Indonesian",
-  korean: "Korean",
-  hindi: "Hindi",
-  german: "German",
+  burmese: "burmese",
+  english: "english",
+  japanese: "japanese",
+  chinese: "chinese",
+  thai: "thai",
+  indonesian: "indonesian",
+  korean: "korean",
+  hindi: "hindi",
+  german: "german",
 };
 
 export function LanguageSelector() {
+  const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
+
   return (
-    <Select>
+    <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
       <SelectTrigger className="w-[170px]">
         <SelectValue placeholder="Select a language" />
       </SelectTrigger>

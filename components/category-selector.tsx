@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   StickyNote,
   Brain,
@@ -17,8 +16,9 @@ import {
   User,
   Briefcase,
 } from "lucide-react";
+import { useAtom } from 'jotai';
+import { selectedCategoryAtom } from '@/app/store';
 
-// Define the categories with labels & icons
 const categories = {
   note: {
     label: "Note",
@@ -46,9 +46,18 @@ const categories = {
   },
 };
 
-export function CategorySelector() {
+export function CategorySelector({ onCategoryChange }) {
+  const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
+
+  const handleSelectChange = (value) => {
+    setSelectedCategory(value);
+    if (onCategoryChange) {
+      onCategoryChange(value); // Call the prop function to notify parent
+    }
+  };
+
   return (
-    <Select>
+    <Select value={selectedCategory} onValueChange={handleSelectChange}>
       <SelectTrigger className="w-[200px] shadow-xs">
         <SelectValue placeholder="Select a category" />
       </SelectTrigger>

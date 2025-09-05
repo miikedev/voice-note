@@ -1,39 +1,66 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Mic, StopCircle, Download, Trash2 } from 'lucide-react';
+import { Mic, StopCircle, Download, Trash2, Loader } from 'lucide-react';
 import useRecorder from '@/app/hooks/useRecorder';
 import WaveformBars from './waveform-bars';
-
+import { selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
+import { toast } from "sonner"
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react';
 const VoiceRecorder = () => {
+    const { data: session, status } = useSession();
+    const router = useRouter()
+    const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
+    const [selectedDuration, setSelectedDuration] = useAtom(selectedDurationAtom);
+    const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
+
+    console.log('session', session)
+    
     const {
         isRecording,
         recordingBlob,
         startRecording,
         stopRecording,
         clearRecording,
-        downloadRecording
-    } = useRecorder();
+        downloadRecording,
+        isProcessingVoice,
+    } = useRecorder(setTranscribedData, transcribedData, router, session);
 
     const prefersReducedMotion = usePrefersReducedMotion();
+
+    const handleRecordClick = () => {
+        if (selectedDuration && selectedLanguage) {
+            isRecording ? stopRecording() : startRecording()
+        } else {
+            if (!selectedLanguage && !selectedDuration) {
+                toast.warning('Please select duration and language')
+            } else if (!selectedLanguage) {
+                toast.warning('Please select language')
+            } else if (!selectedDuration) {
+                toast.warning('Please select duration')
+            }
+        }
+    }
+
+    console.log('transcribed data', transcribedData)
+
 
     return (
         <div className="flex flex-col items-center justify-center p-3 rounded-sm max-w-sm mx-auto">
             <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>
 
             {/* Show waveform animation only while recording */}
-            
 
             {/* Record/Stop button (only when no blob yet) */}
             {!recordingBlob && (
                 <button
-                    onClick={isRecording ? stopRecording : startRecording}
-                    className={`flex items-center justify-center size-14 rounded-full text-white transition-colors ${
-                        isRecording
+                    onClick={handleRecordClick}
+                    className={`flex items-center justify-center size-24 rounded-full text-white transition-colors ${isRecording
                             ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                             : 'bg-gray-900 hover:bg-gray-700'
-                    }`}
+                        }`}
                 >
-                    {isRecording ? <StopCircle size={20} /> : <Mic size={20} />}
+                    {isRecording ? <StopCircle size={35} /> : <Mic size={35} />}
                 </button>
             )}
 
@@ -47,8 +74,10 @@ const VoiceRecorder = () => {
                 </div>
             )}
 
+            {/* {transcribedData && (<h1 className='font-bold text-3xl'></h1>)} */}
+
             {/* Playback + download/delete controls after recording finished */}
-            {recordingBlob && (
+            {/* {recordingBlob && (
                 <div className="flex flex-col items-center gap-4 w-full">
                     <audio
                         controls
@@ -70,7 +99,9 @@ const VoiceRecorder = () => {
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
+
+            {isProcessingVoice && <Loader className='animate-spin' />}
         </div>
     )
 }
