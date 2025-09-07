@@ -4,19 +4,26 @@ import { atomWithInfiniteQuery, atomWithQuery, atomWithMutation } from 'jotai-ta
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import { toast } from 'sonner'
 
+const toggleAtom = atom(false);
+
 const voiceNoteAtom = atomWithQuery((get) => {
-  const email = get(emailAtom);  // Ensure you're extracting the email properly
-  console.log('email in voiceNoteAtom', email)
+  const email = get(emailAtom);
   const category = get(selectedCategoryAtom);
-  console.log('Fetching with email:', email, 'and category:', category); // Debug output
+  const isDescending = get(toggleAtom); // Get the toggle state for sorting
+
+  console.log('email in voiceNoteAtom:', email);
+  console.log('Fetching with email:', email.email, 'and category:', category, 'Descending:', isDescending); // Debug output
 
   return {
-    queryKey: ['voice-notes', email.email, category],
+    queryKey: ['voice-notes', email.email, category, isDescending], // Add isDescending to queryKey
     queryFn: async () => {
       if (!email) {
         throw new Error("Email is not defined");
       }
-      const res = await fetch(`/api/notes?email=${email.email}&category=${category}`);
+
+      // You might want to make additional changes on the server side to handle sort order
+      const res = await fetch(`/api/notes?email=${email.email}&category=${category}&order=${isDescending ? 'desc' : 'asc'}`); // Pass sort order as query param 
+
       if (!res.ok) {
         throw new Error("Failed to fetch notes");
       }
@@ -148,4 +155,4 @@ export const submitDataAtom = atom(async (get) => {
 });
 
 
-export { useAtom, voiceNoteAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, selectedCategoryAtom, submittedDataAtom, mutateVoiceNoteAtom, emailAtom }
+export { useAtom, voiceNoteAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, selectedCategoryAtom, submittedDataAtom, mutateVoiceNoteAtom, emailAtom, toggleAtom }

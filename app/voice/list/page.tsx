@@ -2,6 +2,7 @@
 import { CategorySelector } from '@/components/category-selector'
 import NoteList from '@/components/note-list'
 import NoteSearchInput from '@/components/note-search-input'
+import ToggleUpDownButton from '@/components/toggle-up-down-button'
 import { Button } from '@/components/ui/button'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ArrowUpDownIcon } from 'lucide-react'
@@ -15,9 +16,7 @@ const Page = () => {
         <h1 className='text-2xl font-semibold'>History</h1>
         <div className='flex gap-3 items-center'>
         <CategorySelector />
-        <Button variant={"ghost"} className=''>
-        <ArrowUpDownIcon />
-        </Button>
+        <ToggleUpDownButton />
         </div>
         <NoteSearchInput />
         <NoteList />

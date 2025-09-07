@@ -43,7 +43,12 @@ const COLLECTION_NAME = 'audio_texts';
 //     }
 // }
 
-export async function getNotesByEmail(email: string, category?: string | null) {
+export async function getNotesByEmail(
+    email: string,
+    sortBy: string = 'createdAt', // Default sorting field
+    order: string,
+    category?: string | null,
+) {
     try {
         const client = await clientPromise;
         const db = client.db(DB_NAME);
@@ -59,13 +64,16 @@ export async function getNotesByEmail(email: string, category?: string | null) {
 
         console.log("Query:", query);
 
-        const notes = await collection.find(query).toArray();
+
+        const notes = await collection.find(query).sort({ [sortBy]: order == 'asc' ? 1 : -1 }).toArray();
+
         return notes;
     } catch (error) {
         console.error("Error retrieving notes by email:", error);
         throw error;
     }
 }
+
 
 
 // Usage example

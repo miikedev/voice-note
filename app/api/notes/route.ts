@@ -7,9 +7,10 @@ export async function GET(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
     const category = searchParams.get('category')
-    console.log('hit the route', email, category);
-    const data = await getNotesByEmail(email!, category == null ? '<empty string>' : category)
-    console.log('data', data)
+    const sortBy = 'createdAt'
+    const order = searchParams.get('order')
+    console.log('hit the route', email, category, sortBy, order);
+    const data = await getNotesByEmail(email!, sortBy, order!, category == null ? '<empty string>' : category)
     try {
         // Return a success response
         return NextResponse.json({ success: true, message: 'notes data retrieved.', data });
