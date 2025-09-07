@@ -1,12 +1,14 @@
 
-import { getNotesByUserId } from '@/lib/notes';
+import saveTranscription from '@/lib/db';
+import { getNotesByEmail } from '@/lib/notes';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
-    const user_id = searchParams.get('user_id');
-    console.log('hit the route', user_id);
-    const data = await getNotesByUserId(user_id!)
+    const email = searchParams.get('email');
+    const category = searchParams.get('category')
+    console.log('hit the route', email, category);
+    const data = await getNotesByEmail(email!, category == null ? '<empty string>' : category)
     console.log('data', data)
     try {
         // Return a success response
@@ -19,37 +21,17 @@ export async function GET(request: Request): Promise<NextResponse> {
 }
 
 export async function POST(request: Request) {
+    console.log('Received a POST request'); // Log when a request hits this endpoint
     try {
         const body = await request.json();
+        console.log('body of note post', body); // Log the request body
 
-        // Validate required fields
-        const { burmese, english, context, editedText, category } = body as TranscribedData;
-        if (!burmese || !editedText || !category) {
-            return NextResponse.json(
-                { success: false, message: 'Missing required fields.' },
-                { status: 400 }
-            );
-        }
-
-        // Connect to MongoDB
-        const client = await clientPromise;
-        const db = client.db('voice-note'); // your DB name
-        const notesCollection = db.collection('notes'); // your collection
-
-        // Insert the note
-        const result = await notesCollection.insertOne({
-            burmese,
-            english,
-            context,
-            editedText,
-            category,
-            createdAt: new Date(),
-        });
-
+        // Simulating some processing or saving action
+        console.log('Processing data...');
+        await saveTranscription({ data: body })
         return NextResponse.json({
             success: true,
             message: 'Note saved successfully.',
-            id: result.insertedId,
         });
     } catch (error) {
         console.error('Failed to save note:', error);

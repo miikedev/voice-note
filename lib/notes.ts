@@ -1,3 +1,4 @@
+import { Cagliostro } from 'next/font/google';
 import clientPromise from '../lib/mongodb'; // Adjust path if necessary
 
 interface AudioText {
@@ -24,45 +25,56 @@ interface AudioText {
 const DB_NAME = 'voice-note';
 const COLLECTION_NAME = 'audio_texts';
 
-export async function insertNote(note: TranscribedData & { user_id: number }) {
+// export async function insertNote(note: TranscribedData & { user_id: number }) {
+//     try {
+//         const client = await clientPromise;
+//         const db = client.db(DB_NAME);
+//         const collection = db.collection(COLLECTION_NAME);
+
+//         const result = await collection.insertOne({
+//             ...note,
+//             createdAt: new Date(),
+//         });
+
+//         return result.insertedId;
+//     } catch (error) {
+//         console.error('Error inserting note:', error);
+//         throw error;
+//     }
+// }
+
+export async function getNotesByEmail(email: string, category?: string | null) {
     try {
         const client = await clientPromise;
         const db = client.db(DB_NAME);
         const collection = db.collection(COLLECTION_NAME);
 
-        const result = await collection.insertOne({
-            ...note,
-            createdAt: new Date(),
-        });
+        // Build the query object
+        const query: { email: string; category?: string } = { email };
 
-        return result.insertedId;
-    } catch (error) {
-        console.error('Error inserting note:', error);
-        throw error;
-    }
-}
+        // Only filter by category if it's not "all" or null/undefined
+        if (category && category.toLowerCase() !== "all") {
+            query.category = category;
+        }
 
-export async function getNotesByUserId(userId: number) {
-    try {
-        const client = await clientPromise;
-        const db = client.db(DB_NAME);
-        const collection = db.collection(COLLECTION_NAME);
+        console.log("Query:", query);
 
-        const notes = await collection.find({ user_id: userId }).toArray();
+        const notes = await collection.find(query).toArray();
         return notes;
     } catch (error) {
-        console.error('Error retrieving notes:', error);
+        console.error("Error retrieving notes by email:", error);
         throw error;
     }
 }
 
+
 // Usage example
-(async () => {
-    const userId = 'YOUR_USER_ID'; // Replace with the actual user ID
-    try {
-        const notes = await getNotesByUserId(userId);
-        console.log('Retrieved notes:', notes);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-})();
+// (async () => {
+//     const userId = 'YOUR_USER_ID'; // Replace with the actual user ID
+//     try {
+//         const notes = await getNotesByUserId(userId);
+//         console.log('Retrieved notes:', notes);
+//     } catch (error) {
+//         console.error('Error:', error);
+//     }
+// })();

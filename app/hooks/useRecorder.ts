@@ -12,7 +12,7 @@ interface RecorderControls {
     isProcessingVoice: boolean;
 }
 
-const useRecorder = (setTranscribedData, transcribedData, router, session): RecorderControls => {
+const useRecorder = (setTranscribedData, transcribedData, router, email): RecorderControls => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
     const [isProcessingVoice, setIsProcessingVoice] = useState(false)
@@ -38,7 +38,7 @@ const useRecorder = (setTranscribedData, transcribedData, router, session): Reco
                 const recordedBlob = new Blob(chunksRef.current, { type: 'audio/ogg' });
                 setRecordingBlob(recordedBlob);
                 const formData = new FormData();
-                formData.append('email', session.user.email);
+                formData.append('email', email.email);
                 formData.append('audio', recordedBlob, `voice-note-${Date.now()}.ogg`);
 
                 try {

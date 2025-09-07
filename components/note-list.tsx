@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is corr
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query"; // Ensure you installed @tanstack/react-query
 import { Badge } from "@/components/ui/badge"
-import { useAtom, userAtom } from "@/app/store";
+import { emailAtom, TranscribedData, useAtom, userAtom, voiceNoteAtom } from "@/app/store";
 import { useSession } from "next-auth/react";
 
 // Define the Note type
@@ -49,31 +49,13 @@ const dummyNotes: Note[] = [
     },
 ];
 
-// Function to simulate fetching notes data
-const fetchNotes = async (): Promise<Note[]> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(dummyNotes); // Resolve the dummy notes after a delay
-        }, 2000); // Simulate a 1-second delay
-    });
-};
-
-
-
 const NoteList: React.FC = () => {
-        const { data: session, status } = useSession();
-    
-    const [{ data: user, isPending, isError }] = useAtom(userAtom)
+    const [email,] = useAtom(emailAtom)
+    console.log('email', email)
+    const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
-    console.log('user', user, 'session data', session)
-    console.log('pending', isPending)
-    // Using React Query to fetch notes
-    const { isLoading, error, data: notes } = useQuery<Note[], Error>({
-        queryKey: ['notes'],
-        queryFn: fetchNotes,
-    });
-
-    if (isLoading) return (
+    console.log('notes', notes)
+    if (isPending) return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render skeletons while loading */}
             {Array.from({ length: 5 }).map((_, index) => (
@@ -89,23 +71,20 @@ const NoteList: React.FC = () => {
         </div>
     );
 
-    if (error) return <div>An error has occurred: {error.message}</div>;
+    if (isError) return <div>An error has occurred: {error.message}</div>;
 
     return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render notes once loading is finished */}
-            {notes?.map((note) => (
+            {isSuccess && notes?.data.map((note: TranscribedData) => (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }} // Initial state for animation
                     animate={{ opacity: 1, y: 0 }} // Final state for animation
                     transition={{ duration: 0.5 }} // Animation duration
-                    key={note.id}
+                    key={note._id}
                     className="p-4 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition relative"
                 >
-                    {/* <span className="text-xs font-medium text-gray-500 uppercase">
-            {note.category}
-          </span> */}
-                    <p className="text-md font-semibold mt-[1.1rem]">{note.content}</p>
+                    <p className="text-md font-semibold mt-[1.1rem]">{note.editedText}</p>
                     <Badge variant="default" className="absolute right-[.5rem] top-[.5rem]">{note.category}</Badge>
                 </motion.div>
             ))}

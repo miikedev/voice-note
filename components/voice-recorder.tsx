@@ -3,17 +3,23 @@ import React, { useEffect, useState } from 'react'
 import { Mic, StopCircle, Download, Trash2, Loader } from 'lucide-react';
 import useRecorder from '@/app/hooks/useRecorder';
 import WaveformBars from './waveform-bars';
-import { selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
+import { emailAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react';
+
 const VoiceRecorder = () => {
     const { data: session, status } = useSession();
+    const [email,setEmail] = useAtom(emailAtom)
     const router = useRouter()
     const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
     const [selectedDuration, setSelectedDuration] = useAtom(selectedDurationAtom);
+
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
+    useEffect(()=> {if(session) setEmail({email: session?.user?.email!})},[])
+
+    console.log('email', email)
     console.log('session', session)
     
     const {
@@ -24,7 +30,7 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder(setTranscribedData, transcribedData, router, session);
+    } = useRecorder(setTranscribedData, transcribedData, router, email);
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -77,7 +83,7 @@ const VoiceRecorder = () => {
             {/* {transcribedData && (<h1 className='font-bold text-3xl'></h1>)} */}
 
             {/* Playback + download/delete controls after recording finished */}
-            {/* {recordingBlob && (
+            {recordingBlob && (
                 <div className="flex flex-col items-center gap-4 w-full">
                     <audio
                         controls
@@ -99,7 +105,7 @@ const VoiceRecorder = () => {
                         </button>
                     </div>
                 </div>
-            )} */}
+            )}
 
             {isProcessingVoice && <Loader className='animate-spin' />}
         </div>

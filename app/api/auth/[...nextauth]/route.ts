@@ -26,7 +26,7 @@ const authOptions: NextAuthOptions = {
             console.log('profile', profile)
             try {
                 const client = await clientPromise;
-                const db = client.db("voice-note");
+                const db = client.db("voice-note-next");
 
                 await db.collection("users").updateOne(
                     { email: profile.email },

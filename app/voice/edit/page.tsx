@@ -1,37 +1,21 @@
 "use client";
-import { selectedCategoryAtom, submittedDataAtom, transcribedAtom, useAtom } from '@/app/store';
+import { voiceNoteSchema, VoiceNoteInput } from '@/app/schema/voiceNote';
+import { mutateVoiceNoteAtom, selectedCategoryAtom, submittedDataAtom, SubmittedDataType, transcribedAtom, useAtom } from '@/app/store';
 import { CategorySelector } from '@/components/category-selector';
 import CopyTextButton from '@/components/copy-text-button';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
+import { z, ZodError } from "zod";
 
 const Page = () => {
+  const router = useRouter();
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom);
   const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
-  const [submittedData , setSubmittedData] = useAtom(submittedDataAtom);
-
-  const validateTranscribedText = (value: string) => {
-    if (!value || value.trim() === '') {
-      return "Transcribed text is required.";
-    }
-    return '';
-  };
-
-  const validateEditedText = (value: string) => {
-    if (!value || value.trim() === '') {
-      return "Edited text is required.";
-    }
-    return '';
-  };
-
-  const validateCategorySelection = (value: string) => {
-    if (!value) {
-      return "Please select a category.";
-    }
-    return '';
-  };
+  const [submittedData, setSubmittedData] = useAtom(submittedDataAtom);
+  const [{ mutate, status }] = useAtom(mutateVoiceNoteAtom);
 
   const handleTranscribedChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -45,68 +29,94 @@ const Page = () => {
     const value = e.target.value;
     setTranscribedData((prev) => ({
       ...prev,
-      editedText: value, // ✅ store edited text properly
+      editedText: value,
     }));
   };
 
-  const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-  };
-
-  console.log('type of transcribed data', typeof transcribedData)
   const handleSubmit = () => {
-    const transcriptionErr = validateTranscribedText(transcribedData?.burmese || '');
-    const editedErr = validateEditedText(transcribedData?.editedText || '');
-    const categoryErr = validateCategorySelection(selectedCategory ?? '');
+    const finalData: VoiceNoteInput = {
+      ...transcribedData,
+      editedText: transcribedData?.editedText || transcribedData?.burmese,
+      category: selectedCategory!,
+    };
 
-    if (transcriptionErr) return toast.warning(transcriptionErr);
-    if (editedErr) return toast.warning(editedErr);
-    if (categoryErr) return toast.warning(categoryErr);
+    // ✅ Validate with Zod
+    const parsed = voiceNoteSchema.safeParse(finalData);
 
-    // ✅ Save final data
-    setSubmittedData({
-      ...(transcribedData || {}),
-      burmese: transcribedData?.editedText,
-      category: selectedCategory,
-    });
+    if (!parsed.success) {
+      console.log(parsed.error.message)
+      const errors = JSON.parse(parsed.error.message)
+      console.log(errors)
+      errors.forEach((e: any) => toast.error(e.message))
+    }
 
-    // call api to store updated data
-    toast.success("Data saved successfully!");
+    const dataToSend: SubmittedDataType = {
+      ...parsed?.data
+    };
+
+    console.log('data', dataToSend)
+
+    try {
+      mutate(
+        { data: dataToSend },
+        {
+          onSuccess: () => {
+            toast.success("Your voice note has been saved");
+            setSubmittedData(dataToSend);
+            setTranscribedData({
+              burmese: "",
+              english: "",
+              context: "",
+              audioUrl: "",
+              email: "",
+              editedText: "",
+              category: "",
+            });
+            setSelectedCategory("");
+            setTimeout(() => {
+              router.push("/voice/list");
+            }, 1500);
+          },
+        }
+      );
+    } catch (error) {
+      toast.error(`Error saving data: ${error}`);
+    }
   };
-
-  console.log('submitted data', submittedData)
 
   return (
-    <div className='flex flex-col gap-6 px-5 py-15'>
-      <div className='flex flex-col gap-2'>
-        <div className='flex justify-between'>
-          <h1 className='text-xl font-semibold'>Transcribed Text</h1>
-          <CopyTextButton text={transcribedData?.burmese || ''} />
+    <div className="flex flex-col gap-6 px-5 py-15">
+      <div className="flex flex-col gap-2">
+        <div className="flex justify-between">
+          <h1 className="text-xl font-semibold">Transcribed Text</h1>
+          <CopyTextButton text={transcribedData?.burmese || ""} />
         </div>
         <Textarea
-          value={transcribedData?.burmese || ''}
+          value={transcribedData?.burmese || ""}
           onChange={handleTranscribedChange}
-          placeholder='Your transcribed text'
-          className='shadow-xs rounded-sm'
+          placeholder="Your transcribed text"
+          className="shadow-xs rounded-sm"
         />
       </div>
 
-      <div className='flex flex-col gap-2'>
-        <h1 className='text-xl font-semibold'>Edit</h1>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-xl font-semibold">Edit</h1>
         <Textarea
           value={transcribedData?.editedText ?? transcribedData?.burmese}
           onChange={handleEditChange}
-          placeholder='Your edited text'
-          className='shadow-xs rounded-sm'
+          placeholder="Your edited text"
+          className="shadow-xs rounded-sm"
         />
       </div>
 
       <div>
-        <CategorySelector onCategoryChange={handleCategoryChange} />
+        <CategorySelector />
       </div>
 
       <div>
-        <Button className='w-full' onClick={handleSubmit}>Save</Button>
+        <Button className="w-full" onClick={handleSubmit}>
+          {status === "pending" ? "Saving..." : status === "success" ? "Saved" : "Save"}
+        </Button>
       </div>
     </div>
   );
