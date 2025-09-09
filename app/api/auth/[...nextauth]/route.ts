@@ -13,7 +13,7 @@ const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             httpOptions: {
-                timeout: 15000, // 10s instead of 3.5s
+                timeout: 15000, // 15 seconds timeout
             },
         }),
     ],
@@ -21,25 +21,33 @@ const authOptions: NextAuthOptions = {
         async signIn({ profile }) {
             if (!profile?.email) {
                 console.error("❌ No email found in profile");
-                return false; // deny sign-in
+                return false; // Deny sign-in
             }
-            console.log('profile', profile)
+            console.log('profile', profile);
             try {
                 const client = await clientPromise;
                 const db = client.db("voice-note");
 
-                await db.collection<Profile>("users").updateOne(
+                // Update the user only if the email exists, do nothing if not found
+                const result = await db.collection<Profile>("users").updateOne(
                     { email: profile.email },
                     {
                         $set: {
                             name: profile.name,
                             email: profile.email,
                         },
-                    },
-                    { upsert: true }
+                    }
+                    // No upsert option, so it won't insert a new document if not found
                 );
 
-                return true; // ✅ allow sign-in
+                // Check if a document was modified
+                if (result.modifiedCount > 0) {
+                    console.log("✅ User updated successfully");
+                } else {
+                    console.log("🔍 No user found with that email, no update performed");
+                }
+
+                return true; // ✅ Allow sign-in
             } catch (err) {
                 console.error("❌ MongoDB error during signIn:", err);
                 // Return false = user is not signed in, but no hard crash
