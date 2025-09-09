@@ -45,6 +45,7 @@ const authOptions: NextAuthOptions = {
                     console.log("✅ User updated successfully");
                 } else {
                     console.log("🔍 No user found with that email, no update performed");
+                    return false;
                 }
 
                 return true; // ✅ Allow sign-in
