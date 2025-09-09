@@ -7,21 +7,31 @@ import { useRouter } from 'next/navigation'
 const PageNavs = () => {
     const router = useRouter()
     return (
-        <div className=''>
-            <Tabs defaultValue="account" className="">
-                <TabsList className='h-[5rem] w-[15rem] rounded-3xl'>
-                    <TabsTrigger value="voice" onClick={()=>router.push('/voice')}>
-                        <Mic />
+        <div className="flex justify-center">
+            <Tabs defaultValue="account" className="bg-transparent">
+                <TabsList className='h-[5rem] w-[15rem] rounded-xl flex gap-1 backdrop-blur-md bg-white/30 border border-white/20'>
+                    <TabsTrigger 
+                        className='opacity-80 text-black bg-white/20 hover:bg-white/40 rounded-lg transition duration-200' 
+                        value="voice" 
+                        onClick={() => router.push('/voice')}
+                    >
+                        <Mic className='text-black'/>
                     </TabsTrigger>
-                    <TabsTrigger value="upload" onClick={()=>router.push('/voice/upload')}>
-                        <Upload />
+                    <TabsTrigger 
+                        className='opacity-80 text-black bg-white/20 hover:bg-white/40 rounded-lg transition duration-200' 
+                        value="upload" 
+                        onClick={() => router.push('/voice/upload')}
+                    >
+                        <Upload className='text-black'/>
                     </TabsTrigger>
-                    <TabsTrigger value="history" onClick={()=>router.push('/voice/list')}>
-                        <History />
+                    <TabsTrigger 
+                        className='opacity-80 text-black bg-white/20 hover:bg-white/40 rounded-lg transition duration-200' 
+                        value="history" 
+                        onClick={() => router.push('/voice/list')}
+                    >
+                        <History className='text-black'/>
                     </TabsTrigger>
                 </TabsList>
-                {/* <TabsContent value="account">Make changes to your account here.</TabsContent>
-                <TabsContent value="password">Change your password here.</TabsContent> */}
             </Tabs>
         </div>
     )

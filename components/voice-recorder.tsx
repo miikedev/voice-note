@@ -52,12 +52,11 @@ const VoiceRecorder = () => {
 
     return (
         <div className="flex flex-col items-center justify-center p-3 rounded-sm max-w-sm mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>
-
+            {/* {!isProcessingVoice && <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>} */}
             {/* Show waveform animation only while recording */}
 
             {/* Record/Stop button (only when no blob yet) */}
-            {!recordingBlob && (
+            {!isProcessingVoice && !recordingBlob && (
                 <button
                     onClick={handleRecordClick}
                     className={`flex items-center justify-center size-24 rounded-full text-white transition-colors ${isRecording
@@ -69,8 +68,8 @@ const VoiceRecorder = () => {
                 </button>
             )}
 
-            {isRecording && !recordingBlob && (
-                <div className="h-40 mb-6 absolute bottom-5 w-56">
+            {!isProcessingVoice && isRecording && !recordingBlob && (
+                <div className="h-40 mb-6 w-56">
                     <WaveformBars
                         barAnims={Array.from({ length: 40 }, (_, i) => randomBarAnim(i))}
                         recording={isRecording}
@@ -82,7 +81,7 @@ const VoiceRecorder = () => {
             {/* {transcribedData && (<h1 className='font-bold text-3xl'></h1>)} */}
 
             {/* Playback + download/delete controls after recording finished */}
-            {recordingBlob && (
+            {/* {!isProcessingVoice && recordingBlob && (
                 <div className="flex flex-col items-center gap-4 w-full">
                     <audio
                         controls
@@ -104,7 +103,7 @@ const VoiceRecorder = () => {
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {isProcessingVoice && <Loader className='animate-spin' />}
         </div>
