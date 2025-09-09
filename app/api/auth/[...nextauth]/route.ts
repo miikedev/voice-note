@@ -1,10 +1,14 @@
 // app/api/auth/[...nextauth]/route.ts
 
-import NextAuth, { NextAuthOptions, Profile } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import clientPromise from '../../../../lib/mongodb';
 
 const authOptions: NextAuthOptions = {
+    pages: {
+        signIn: '/login',
+        error: '/auth/error',
+    },
     session: {
         strategy: 'jwt',
     },
@@ -13,23 +17,23 @@ const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             httpOptions: {
-                timeout: 15000, // 15 seconds timeout
+                timeout: 15000,
             },
         }),
     ],
     callbacks: {
         async signIn({ profile }) {
             if (!profile?.email) {
-                console.error("❌ No email found in profile");
-                return false; // Deny sign-in
+                console.error('❌ No email found in profile');
+                return false; // deny login if no email
             }
-            console.log('profile', profile);
+
             try {
                 const client = await clientPromise;
-                const db = client.db("voice-note");
+                const db = client.db('voice-note');
 
-                // Update the user only if the email exists, do nothing if not found
-                const result = await db.collection<Profile>("users").updateOne(
+                // Try to update the user
+                const result = await db.collection('users').updateOne(
                     { email: profile.email },
                     {
                         $set: {
@@ -37,26 +41,22 @@ const authOptions: NextAuthOptions = {
                             email: profile.email,
                         },
                     }
-                    // No upsert option, so it won't insert a new document if not found
+                    // ❌ no upsert
                 );
 
-                // Check if a document was modified
-                if (result.modifiedCount > 0) {
-                    console.log("✅ User updated successfully");
+                if (result.matchedCount > 0) {
+                    console.log('✅ Existing user logged in and updated');
+                    return true; // allow login
                 } else {
-                    console.log("🔍 No user found with that email, no update performed");
-                    return false;
+                    console.log('⛔ User not found, denying login');
+                    return false; // deny if not in system
                 }
-
-                return true; // ✅ Allow sign-in
             } catch (err) {
-                console.error("❌ MongoDB error during signIn:", err);
-                // Return false = user is not signed in, but no hard crash
+                console.error('❌ MongoDB error during signIn:', err);
                 return false;
-                // OR: throw new Error("Database connection failed"); // if you want to show error page
             }
         },
-    }
+    },
 };
 
 const handler = NextAuth(authOptions);

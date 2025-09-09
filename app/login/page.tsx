@@ -22,12 +22,12 @@ const LoginPage = () => {
         if (status === "authenticated" && session) {
             // Make sure session exists before spreading
             setAuth({
-               user: {
-                name: session?.user?.name ?? "",
-                email: session?.user?.email ?? "",
-                image: session?.user?.image ?? "",
-      },
-      expires: session.expires,
+                user: {
+                    name: session?.user?.name ?? "",
+                    email: session?.user?.email ?? "",
+                    image: session?.user?.image ?? "",
+                },
+                expires: session.expires,
             });
             router.push("/voice");
         }
@@ -49,13 +49,19 @@ const LoginPage = () => {
     }, [router]);
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-3xl mb-4 font-bold">Voice Note App</h1>
-            <h3 className='text-xl mb-5 font-semibold'>Login</h3>
-            <Button onClick={handleSignIn} className="px-5 py-3 rounded">
+        <div className="flex flex-col justify-center h-screen gap-5 px-6">
+            <div className='w-96 mx-auto flex flex-col gap-2'>
+            <div className='w-96'>
+            <h1 className="text-3xl mb-5 font-extrabold">Voice Note App</h1>
+            <h3 className='text-xl mb-2 font-semibold'>Login to your account
+            </h3>
+            <p className='font-semibold text-md'>Access your notes and recordings effortlessly.</p>
+            </div>
+            <Button onClick={handleSignIn} className="rounded mt-5 w-[15rem]">
                 <GoogleIcon /> Sign in with Google
             </Button>
             {status === 'loading' && <LoadingMessage />}
+            </div>
         </div>
     );
 };
