@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useAtom } from "jotai";
-import { emailAtom, transcribedAtom } from "@/app/store";
+import { authAtom, transcribedAtom } from "@/app/store";
 import { useRouter } from "next/navigation";
 
 const voiceNoteFileSchema = z.object({
@@ -28,7 +28,7 @@ const FileUploadComponent = () => {
   const router = useRouter()
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
-  const [email,] = useAtom(emailAtom)
+  const [authData,] = useAtom(authAtom)
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -51,7 +51,7 @@ const FileUploadComponent = () => {
       try {
         setIsProcessing(true);
         const formData = new FormData();
-        formData.append("email", String(email.email));
+        formData.append("email", String(authData.user.email));
         formData.append("audio", file!, `voice-note-${Date.now()}.ogg`);
 
         // const response = await fetch("/api/transcribe", {

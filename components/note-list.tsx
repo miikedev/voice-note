@@ -4,54 +4,13 @@ import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is corr
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query"; // Ensure you installed @tanstack/react-query
 import { Badge } from "@/components/ui/badge"
-import { emailAtom, TranscribedData, useAtom, userAtom, voiceNoteAtom } from "@/app/store";
-import { useSession } from "next-auth/react";
+import { noteData, SubmittedDataType, useAtom, voiceNoteAtom } from "@/app/store";
+type NoteListProps = {
+  category: string;
+};
 
-// Define the Note type
-interface Note {
-    id: number;
-    title: string;
-    content: string;
-    category: string;
-}
+const NoteList: React.FC<NoteListProps> = ({category}: {category: string}) => {
 
-// Dummy notes data
-const dummyNotes: Note[] = [
-    {
-        id: 1,
-        title: "Buy groceries",
-        content: "Milk, eggs, bread, and fruits.",
-        category: "shopping",
-    },
-    {
-        id: 2,
-        title: "Meeting Notes",
-        content: "Discuss project milestones and next sprint planning.",
-        category: "work",
-    },
-    {
-        id: 3,
-        title: "My 2025 Goals",
-        content: "Learn AWS, contribute to open source, and improve fitness.",
-        category: "personal",
-    },
-    {
-        id: 4,
-        title: "Book to Read",
-        content: "Start 'Clean Code' by Robert C. Martin.",
-        category: "note",
-    },
-    {
-        id: 5,
-        title: "Trip Memory",
-        content: "Visited Bagan in Myanmar, sunset was unforgettable.",
-        category: "memory",
-    },
-];
-
-const NoteList: React.FC = () => {
-    const [email,] = useAtom(emailAtom)
-    console.log('email', email)
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
     console.log('notes', notes)
@@ -74,9 +33,10 @@ const NoteList: React.FC = () => {
     if (isError) return <div>An error has occurred: {error.message}</div>;
 
     return (
+        <>
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render notes once loading is finished */}
-            {isSuccess && notes?.data.map((note: TranscribedData) => (
+            {isSuccess && notes.data.length > 0 &&  notes?.data.map((note: noteData) => (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }} // Initial state for animation
                     animate={{ opacity: 1, y: 0 }} // Final state for animation
@@ -84,11 +44,13 @@ const NoteList: React.FC = () => {
                     key={note._id}
                     className="p-4 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition relative"
                 >
-                    <p className="text-md font-semibold mt-[1.1rem]">{note.editedText}</p>
+                    <p className="text-md font-semibold mt-[1.1rem]">{note.transcribedText}</p>
                     <Badge variant="default" className="absolute right-[.5rem] top-[.5rem]">{note.category}</Badge>
                 </motion.div>
             ))}
         </div>
+            {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-center">no data at {category} notes!</small>}
+            </>
     );
 };
 

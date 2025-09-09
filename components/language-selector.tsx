@@ -17,11 +17,9 @@ const languages = {
   burmese: "burmese",
   english: "english",
   japanese: "japanese",
-  chinese: "chinese",
+  korea: "korea",
+  malaysia: "malaysia",
   thai: "thai",
-  indonesian: "indonesian",
-  korean: "korean",
-  hindi: "hindi",
   german: "german",
 };
 

@@ -1,5 +1,6 @@
 "use client"
 import PageNavs from '@/components/page-navs';
+import Setting from '@/components/setting';
 import { Button } from '@/components/ui/button';
 import { LogOut, LogOutIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
@@ -26,10 +27,11 @@ export default function Layout({
 
 
    <div className="flex flex-col h-screen">
-    <div className="sticky flex justify-end top-[1.2rem] px-5 z-50">
-        <Button onClick={() => signOut()}>
+    <div className="sticky flex justify-end top-[1.2rem] px-5 z-50 gap-3">
+        <Button size={"icon"} onClick={() => signOut()}>
             <LogOutIcon />
         </Button>
+        <Setting />
     </div>
     <div className="flex-grow">
         {children}

@@ -3,24 +3,23 @@ import React, { useEffect, useState } from 'react'
 import { Mic, StopCircle, Download, Trash2, Loader } from 'lucide-react';
 import useRecorder from '@/app/hooks/useRecorder';
 import WaveformBars from './waveform-bars';
-import { emailAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
+import { authAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react';
 
 const VoiceRecorder = () => {
-    const { data: session, status } = useSession();
-    const [email,setEmail] = useAtom(emailAtom)
+    const { data: session } = useSession();
+    const [authData,setAuthData] = useAtom(authAtom)
     const router = useRouter()
     const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
     const [selectedDuration, setSelectedDuration] = useAtom(selectedDurationAtom);
 
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
-    useEffect(()=> {if(session) setEmail({email: session?.user?.email!})},[])
+    useEffect(()=> {if(session) setAuthData({...authData})},[])
 
-    console.log('email', email)
-    console.log('session', session)
+    console.log('auth data', authData)
     
     const {
         isRecording,
@@ -30,7 +29,7 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder(setTranscribedData, transcribedData, router, email);
+    } = useRecorder(setTranscribedData, transcribedData, router, authData);
 
     const prefersReducedMotion = usePrefersReducedMotion();
 

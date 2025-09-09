@@ -8,20 +8,25 @@ import { useRouter } from 'next/navigation';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
 import { useAtom } from 'jotai';
-import { emailAtom } from '../store';
+import { authAtom, Auth } from '../store';
+import { ISODateString } from 'next-auth';
 const LoadingMessage = () => (
     <p className='mt-5 text-xl font-semibold'>Please wait...</p>
 );
 
 const LoginPage = () => {
-    const [,setEmail] = useAtom(emailAtom)
+    const [,setAuth] = useAtom(authAtom)
     const { data: session, status } = useSession();
     const router = useRouter();
-    
     // Redirect user to voice page if already authenticated
+    const authData: any = {
+        ...session
+    }
+
     useEffect(() => {
         if (status === 'authenticated') {
-            setEmail(session.user.email)
+            setAuth({...authData})
+            console.log('session', session)
             router.push('/voice');
         }
     }, [status, router]);

@@ -1,16 +1,16 @@
 
 import saveTranscription from '@/lib/db';
-import { getNotesByEmail } from '@/lib/notes';
+import { getUsers } from '@/lib/users';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request): Promise<NextResponse> {
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
-    const category = searchParams.get('category')
-    const sortBy = 'createdAt'
-    const order = searchParams.get('order')
-    console.log('hit the route', email, category, sortBy, order);
-    const data = await getNotesByEmail(email!, sortBy, order!, category == null ? '<empty string>' : category)
+    // const { searchParams } = new URL(request.url);
+    // const email = searchParams.get('email');
+    // const category = searchParams.get('category')
+    // const sortBy = 'createdAt'
+    // const order = searchParams.get('order')
+    // console.log('hit the route', email, category, sortBy, order);
+    const data = await getUsers()
     try {
         // Return a success response
         return NextResponse.json({ success: true, message: 'notes data retrieved.', data });
@@ -28,6 +28,7 @@ export async function POST(request: Request) {
         console.log('body of note post', body); // Log the request body
 
         // Simulating some processing or saving action
+        console.log('Processing data...');
         await saveTranscription({ data: body })
         return NextResponse.json({
             success: true,

@@ -1,6 +1,5 @@
+import { TranscribedData } from '@/app/store';
 import { useState, useRef } from 'react';
-import { put, PutBlobResult } from '@vercel/blob';
-import { redirect } from 'next/navigation';
 
 interface RecorderControls {
     isRecording: boolean;
@@ -12,7 +11,7 @@ interface RecorderControls {
     isProcessingVoice: boolean;
 }
 
-const useRecorder = (setTranscribedData, transcribedData, router, email): RecorderControls => {
+const useRecorder = (setTranscribedData: any, transcribedData: any, router: any, authData: any): RecorderControls => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
     const [isProcessingVoice, setIsProcessingVoice] = useState(false)
@@ -38,7 +37,7 @@ const useRecorder = (setTranscribedData, transcribedData, router, email): Record
                 const recordedBlob = new Blob(chunksRef.current, { type: 'audio/ogg' });
                 setRecordingBlob(recordedBlob);
                 const formData = new FormData();
-                formData.append('email', email.email);
+                formData.append('email', authData.user.email);
                 formData.append('audio', recordedBlob, `voice-note-${Date.now()}.ogg`);
 
                 try {

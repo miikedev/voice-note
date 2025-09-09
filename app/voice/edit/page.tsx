@@ -1,6 +1,6 @@
 "use client";
 import { voiceNoteSchema, VoiceNoteInput } from '@/app/schema/voiceNote';
-import { mutateVoiceNoteAtom, selectedCategoryAtom, submittedDataAtom, SubmittedDataType, transcribedAtom, useAtom } from '@/app/store';
+import { mutateVoiceNoteAtom, selectedCategoryAtom, selectedDurationAtom, selectedLanguageAtom, submittedDataAtom, SubmittedDataType, transcribedAtom, useAtom } from '@/app/store';
 import { CategorySelector } from '@/components/category-selector';
 import CopyTextButton from '@/components/copy-text-button';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ import { z, ZodError } from "zod";
 const Page = () => {
   const router = useRouter();
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom);
+  const [language,] = useAtom(selectedLanguageAtom)
+  const [duration,] = useAtom(selectedDurationAtom)
   const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
   const [submittedData, setSubmittedData] = useAtom(submittedDataAtom);
   const [{ mutate, status }] = useAtom(mutateVoiceNoteAtom);
@@ -32,12 +34,12 @@ const Page = () => {
       editedText: value,
     }));
   };
-
+  console.log('language', language, duration)
   const handleSubmit = () => {
     const finalData: VoiceNoteInput = {
       ...transcribedData,
       editedText: transcribedData?.editedText || transcribedData?.burmese,
-      category: selectedCategory!,
+      category: selectedCategory,
     };
 
     // ✅ Validate with Zod
@@ -51,7 +53,14 @@ const Page = () => {
     }
 
     const dataToSend: SubmittedDataType = {
-      ...parsed?.data
+      english: parsed.data?.english,
+      context: parsed.data?.context,
+      audioUrl: parsed.data?.audioUrl,
+      email: parsed.data?.email,
+      transcribedText: parsed.data?.editedText || parsed.data?.burmese,
+      category: parsed.data?.category,
+      lang: language,
+      duration: Number(duration),
     };
 
     console.log('data', dataToSend)
@@ -85,7 +94,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-5 py-15">
+    <div className="flex flex-col gap-6 px-5 py-15 w-96 mx-auto">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <h1 className="text-xl font-semibold">Transcribed Text</h1>

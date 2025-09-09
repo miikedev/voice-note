@@ -25,7 +25,7 @@ interface AudioText {
 const DB_NAME = 'voice-note';
 const COLLECTION_NAME = 'audio_texts';
 
-// export async function insertNote(note: TranscribedData & { user_id: number }) {
+// async function insertNote(note: TranscribedData & { user_id: number }) {
 //     try {
 //         const client = await clientPromise;
 //         const db = client.db(DB_NAME);
@@ -43,7 +43,7 @@ const COLLECTION_NAME = 'audio_texts';
 //     }
 // }
 
-export async function getNotesByEmail(
+async function getNotesByEmail(
     email: string,
     sortBy: string = 'createdAt', // Default sorting field
     order: string,
@@ -86,3 +86,5 @@ export async function getNotesByEmail(
 //         console.error('Error:', error);
 //     }
 // })();
+
+export { clientPromise, DB_NAME, COLLECTION_NAME, getNotesByEmail }

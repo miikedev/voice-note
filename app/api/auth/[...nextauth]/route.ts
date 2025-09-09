@@ -1,6 +1,6 @@
 // app/api/auth/[...nextauth]/route.ts
 
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, Profile } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import clientPromise from '../../../../lib/mongodb';
 
@@ -26,9 +26,9 @@ const authOptions: NextAuthOptions = {
             console.log('profile', profile)
             try {
                 const client = await clientPromise;
-                const db = client.db("voice-note-next");
+                const db = client.db("voice-note");
 
-                await db.collection("users").updateOne(
+                await db.collection<Profile>("users").updateOne(
                     { email: profile.email },
                     {
                         $set: {
