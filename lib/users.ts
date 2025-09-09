@@ -9,7 +9,6 @@ type User = {
     email?: string;
     image?: string;
     name?: string;
-    // include any other fields you expose to the client
 };
 
 const COLLECTION_NAME = 'users';
@@ -42,7 +41,7 @@ export const getUsers = async (): Promise<User[]> => {
 };
 
 
-export async function createUser(formData: FormData): Promise<any> {
+export async function createUser(formData: FormData): Promise<void> {
     "use server"
     console.log('hit the server component')
     try {
@@ -56,12 +55,11 @@ export async function createUser(formData: FormData): Promise<any> {
             // { upsert: true }
         );
         revalidatePath("/dashboard/users")
-        return {
-            message: 'success'
-        }
+
     } catch (error) {
         console.error('Error saving API key:', error);
-        return { success: false, error: 'Failed to save API key' };
+        throw new Error("Error saving API key")
+        // return { success: false, error: 'Failed to save API key' };
     }
 }
 

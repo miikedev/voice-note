@@ -1,5 +1,4 @@
 import { logger } from '@/lib/logger'
-import { useQueryClient } from '@tanstack/react-query'
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
@@ -74,7 +73,6 @@ export type SubmittedDataType = {
 };
 
 const mutateVoiceNoteAtom = atomWithMutation(get => {
-  const auth = get(authAtom);
   return ({
     mutationKey: ['voice-notes'],
     mutationFn: async ({ data }: { data: SubmittedDataType }) => {

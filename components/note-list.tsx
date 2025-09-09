@@ -2,9 +2,9 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is correct
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query"; // Ensure you installed @tanstack/react-query
 import { Badge } from "@/components/ui/badge"
-import { noteData, SubmittedDataType, useAtom, voiceNoteAtom } from "@/app/store";
+import { noteData, useAtom, voiceNoteAtom } from "@/app/store";
+
 type NoteListProps = {
   category: string;
 };
@@ -13,7 +13,6 @@ const NoteList: React.FC<NoteListProps> = ({category}: {category: string}) => {
 
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
-    console.log('notes', notes)
     if (isPending) return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render skeletons while loading */}
