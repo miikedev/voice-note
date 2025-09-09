@@ -14,20 +14,24 @@ const LoadingMessage = () => (
 );
 
 const LoginPage = () => {
-    const [,setAuth] = useAtom(authAtom)
+    const [, setAuth] = useAtom(authAtom)
     const { data: session, status } = useSession();
     const router = useRouter();
-    // Redirect user to voice page if already authenticated
-    const authData: any = {
-        ...session
-    }
 
     useEffect(() => {
-        if (status === 'authenticated') {
-            setAuth({...authData})
-            router.push('/voice');
+        if (status === "authenticated" && session) {
+            // Make sure session exists before spreading
+            setAuth({
+               user: {
+                name: session?.user?.name ?? "",
+                email: session?.user?.email ?? "",
+                image: session?.user?.image ?? "",
+      },
+      expires: session.expires,
+            });
+            router.push("/voice");
         }
-    }, [status, router]);
+    }, [status, session, router, setAuth]);
 
     // Handle sign in
     const handleSignIn = useCallback(async () => {

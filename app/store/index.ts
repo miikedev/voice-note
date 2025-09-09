@@ -6,14 +6,14 @@ import { toast } from 'sonner'
 
 // Define the User type
 interface User {
-  name: string | undefined;
-  email: string;
-  image: string;
+  name: string | undefined | null;
+  email: string | undefined | null;
+  image: string | undefined | null;
 }
 
 // Define the Auth type
 export interface Auth {
-  user: User;
+  user?: User;
   expires: ISODateString; // Date is typically represented as a string in ISO format
 }
 

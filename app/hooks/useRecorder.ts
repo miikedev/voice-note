@@ -1,3 +1,4 @@
+import { UseRecorderArgs, UseRecorderReturn } from '@/lib/use-recorder-types';
 import { useState, useRef } from 'react';
 
 interface RecorderControls {
@@ -10,7 +11,12 @@ interface RecorderControls {
     isProcessingVoice: boolean;
 }
 
-const useRecorder = (setTranscribedData: any, transcribedData: any, router: any, authData: any): RecorderControls => {
+const useRecorder = ({
+    setTranscribedData,
+    transcribedData,
+    router,
+    authData
+}: UseRecorderArgs): UseRecorderReturn => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
     const [isProcessingVoice, setIsProcessingVoice] = useState(false)

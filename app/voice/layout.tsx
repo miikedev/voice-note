@@ -12,6 +12,7 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    const { status } = useSession();
     const router = useRouter();
   
     useEffect(() => {

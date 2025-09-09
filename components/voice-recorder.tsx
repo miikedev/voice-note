@@ -29,7 +29,7 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder(setTranscribedData, transcribedData, router, authData);
+    } = useRecorder({setTranscribedData, transcribedData, router, authData});
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
