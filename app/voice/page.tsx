@@ -11,7 +11,7 @@ const Page = () => {
         <LanguageSelector />
         <DurationSelector />
       </div>
-      <div className='absolute transform translate-y-124'>
+      <div className='absolute transform translate-y-84'>
       <VoiceRecorder />
       </div>
     </div>
