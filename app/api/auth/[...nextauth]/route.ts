@@ -18,7 +18,7 @@ const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async signIn({ account, profile }) {
+        async signIn({ profile }) {
             if (!profile?.email) {
                 console.error("❌ No email found in profile");
                 return false; // deny sign-in

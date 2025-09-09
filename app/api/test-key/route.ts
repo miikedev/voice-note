@@ -31,10 +31,11 @@ export async function GET(req: NextRequest) {
     }
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const key = searchParams.get('key');
     const email = searchParams.get('email')
+
     try {
         await createApiKey(email!, key)
         return NextResponse.json({ message: "Api Key has been saved" }, { status: 201 })

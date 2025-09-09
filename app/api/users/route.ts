@@ -3,7 +3,7 @@ import saveTranscription from '@/lib/db';
 import { getUsers } from '@/lib/users';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
     // const { searchParams } = new URL(request.url);
     // const email = searchParams.get('email');
     // const category = searchParams.get('category')

@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
         // await saveTranscription(blob.url, parsedData, email);
 
         return NextResponse.json({ result: { ...parsedData, audioUrl: blob.url, email } });
-    } catch (error: any) {
+    } catch (error) {
         logger.error({ error }, "Failed to process transcription");
         return NextResponse.json(
-            { error: "Failed to transcribe or store audio.", details: error.message },
+            { error: "Failed to transcribe or store audio." },
             { status: 500 }
         );
     }
