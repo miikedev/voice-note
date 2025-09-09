@@ -4,7 +4,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { useAtom } from "jotai";
 import { authAtom, transcribedAtom } from "@/app/store";
 import { useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ const FileUploadComponent = () => {
     if (!parsed.success) {
       const errors = JSON.parse(parsed.error.message)
       console.log(errors)
-      errors.forEach((e: any) => toast.error(e.message))
+      errors.forEach((e: ZodError) => toast.error(e.message))
     } else {
 
       try {

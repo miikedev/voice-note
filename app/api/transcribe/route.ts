@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
 import { uploadAudioBlob } from "@/lib/blob";
 import { transcribeAudio } from "@/lib/transcription";
 
@@ -9,7 +8,6 @@ export async function POST(req: NextRequest) {
     const email = formData.get("email") as string | null;
 
     if (!audioFile) {
-        logger.warn("No audio file provided");
         return NextResponse.json({ error: "No audio file provided." }, { status: 400 });
     }
 
@@ -29,7 +27,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ result: { ...parsedData, audioUrl: blob.url, email } });
     } catch (error) {
-        logger.error({ error }, "Failed to process transcription");
         return NextResponse.json(
             { error: "Failed to transcribe or store audio." },
             { status: 500 }

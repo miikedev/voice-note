@@ -1,4 +1,3 @@
-import { TranscribedData } from '@/app/store';
 import { useState, useRef } from 'react';
 
 interface RecorderControls {

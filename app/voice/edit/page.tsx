@@ -1,6 +1,6 @@
 "use client";
 import { voiceNoteSchema, VoiceNoteInput } from '@/app/schema/voiceNote';
-import { mutateVoiceNoteAtom, selectedCategoryAtom, selectedDurationAtom, selectedLanguageAtom, submittedDataAtom, SubmittedDataType, transcribedAtom, useAtom } from '@/app/store';
+import { mutateVoiceNoteAtom, selectedCategoryAtom, selectedDurationAtom, selectedLanguageAtom, submittedDataAtom, SubmittedNoteData, transcribedAtom, useAtom } from '@/app/store';
 import { CategorySelector } from '@/components/category-selector';
 import CopyTextButton from '@/components/copy-text-button';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
-import { z, ZodError } from "zod";
+import { ZodError } from 'zod';
 
 const Page = () => {
   const router = useRouter();
@@ -16,7 +16,7 @@ const Page = () => {
   const [language,] = useAtom(selectedLanguageAtom)
   const [duration,] = useAtom(selectedDurationAtom)
   const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
-  const [submittedData, setSubmittedData] = useAtom(submittedDataAtom);
+  const [, setSubmittedData] = useAtom(submittedDataAtom);
   const [{ mutate, status }] = useAtom(mutateVoiceNoteAtom);
 
   const handleTranscribedChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -34,7 +34,7 @@ const Page = () => {
       editedText: value,
     }));
   };
-  console.log('language', language, duration)
+
   const handleSubmit = () => {
     const finalData: VoiceNoteInput = {
       ...transcribedData,
@@ -49,47 +49,52 @@ const Page = () => {
       console.log(parsed.error.message)
       const errors = JSON.parse(parsed.error.message)
       console.log(errors)
-      errors.forEach((e: any) => toast.error(e.message))
+      errors.forEach((e: ZodError) => {
+        console.log(e)
+        toast.error(e.message)
+      })
     }
 
-    const dataToSend: SubmittedDataType = {
-      english: parsed.data?.english,
-      context: parsed.data?.context,
-      audioUrl: parsed.data?.audioUrl,
-      email: parsed.data?.email,
+    const dataToSend: SubmittedNoteData = {
+      english: parsed.data?.english!,
+      context: parsed.data?.context!,
+      audioUrl: parsed.data?.audioUrl!,
+      email: parsed.data?.email!,
       transcribedText: parsed.data?.editedText || parsed.data?.burmese,
-      category: parsed.data?.category,
-      lang: language,
+      category: parsed.data?.category!,
+      lang: language!,
       duration: Number(duration),
     };
 
     console.log('data', dataToSend)
 
-    try {
-      mutate(
-        { data: dataToSend },
-        {
-          onSuccess: () => {
-            toast.success("Your voice note has been saved");
-            setSubmittedData(dataToSend);
-            setTranscribedData({
-              burmese: "",
-              english: "",
-              context: "",
-              audioUrl: "",
-              email: "",
-              editedText: "",
-              category: "",
-            });
-            setSelectedCategory("");
-            setTimeout(() => {
-              router.push("/voice/list");
-            }, 1500);
-          },
-        }
-      );
-    } catch (error) {
-      toast.error(`Error saving data: ${error}`);
+    if (parsed.success) {
+      try {
+        mutate(
+          { data: dataToSend },
+          {
+            onSuccess: () => {
+              toast.success("Your voice note has been saved");
+              setSubmittedData(dataToSend);
+              setTranscribedData({
+                burmese: "",
+                english: "",
+                context: "",
+                audioUrl: "",
+                email: "",
+                editedText: "",
+                category: "",
+              });
+              setSelectedCategory("");
+              setTimeout(() => {
+                router.push("/voice/list");
+              }, 1500);
+            },
+          }
+        );
+      } catch (error) {
+        toast.error(`Error saving data: ${error}`);
+      }
     }
   };
 

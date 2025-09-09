@@ -8,8 +8,7 @@ import { useRouter } from 'next/navigation';
 import GoogleIcon from '@/components/icons/google-icon';
 import { Button } from '@/components/ui/button';
 import { useAtom } from 'jotai';
-import { authAtom, Auth } from '../store';
-import { ISODateString } from 'next-auth';
+import { authAtom } from '../store';
 const LoadingMessage = () => (
     <p className='mt-5 text-xl font-semibold'>Please wait...</p>
 );
@@ -26,7 +25,6 @@ const LoginPage = () => {
     useEffect(() => {
         if (status === 'authenticated') {
             setAuth({...authData})
-            console.log('session', session)
             router.push('/voice');
         }
     }, [status, router]);

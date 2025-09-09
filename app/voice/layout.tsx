@@ -2,7 +2,7 @@
 import PageNavs from '@/components/page-navs';
 import Setting from '@/components/setting';
 import { Button } from '@/components/ui/button';
-import { LogOut, LogOutIcon } from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
@@ -12,7 +12,6 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const { data: session, status } = useSession();
     const router = useRouter();
   
     useEffect(() => {

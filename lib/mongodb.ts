@@ -8,8 +8,6 @@ if (!uri) {
 
 // Global is used here to maintain a cached connection across hot reloads in dev.
 // This prevents creating new connections on every reload.
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
 
 // if (process.env.NODE_ENV === "development") {
 //     if (!(global as any)._mongoClientPromise) {
@@ -25,14 +23,14 @@ let clientPromise: Promise<MongoClient>;
 //     clientPromise = (global as any)._mongoClientPromise;
 // } else {
 // In production, create a new client instance (no hot reloads).
-client = new MongoClient(uri, {
+const client: MongoClient = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
         deprecationErrors: true,
     },
 });
-clientPromise = client.connect();
+const clientPromise: Promise<MongoClient> = client.connect();
 // }
 
 export default clientPromise;

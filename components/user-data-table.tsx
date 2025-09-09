@@ -113,7 +113,7 @@ export const columns: ColumnDef<User>[] = [
     },
 ]
 
-export default function DataTable({ data }: { data: any }) {
+export default function DataTable({ data }: { data: User[] }) {
     console.log('data in data table', data)
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

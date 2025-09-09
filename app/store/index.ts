@@ -1,4 +1,3 @@
-import { logger } from '@/lib/logger'
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
@@ -18,7 +17,7 @@ export interface Auth {
   expires: ISODateString; // Date is typically represented as a string in ISO format
 }
 
-const initialAuth: Auth = {
+const authContent: Auth = {
   user: {
     name: "",
     email: "",
@@ -27,13 +26,80 @@ const initialAuth: Auth = {
   expires: "",
 };
 
-// Use the initial value as the initial state
-const emailContent: Auth = initialAuth;
-
 // toggle atom for data descending and ascending
 const toggleAtom = atom(false);
 
 const apiKeyAtom = atom<string>("");
+
+const selectedLanguageAtom = atom<string | undefined>(undefined);
+const selectedDurationAtom = atom<string | undefined>(undefined);
+
+export interface TranscribedData {
+  _id?: string;
+  burmese: string;
+  english: string;
+  context: string;
+  audioUrl: string;
+  email: string;
+  editedText?: string;
+  category: string | null;
+}
+
+const transcribedContent = {
+  burmese: "",
+  english: "",
+  context: "",
+  editedText: "",
+  category: "",
+  audioUrl: "",
+  email: ""
+}
+
+const submittedContent = {
+  english: "",
+  context: "",
+  audioUrl: "",
+  email: "",
+  transcribedText: "",
+  category: "",
+  lang: "",
+  duration: undefined,
+}
+
+export type SubmittedNoteData = {
+  _id?: string;
+  english: string;
+  context: string;
+  audioUrl: string;
+  email: string;
+  transcribedText?: string;
+  category: string | null;
+  lang: string;
+  duration: number;
+}
+
+const transcribed_storage = createJSONStorage<TranscribedData>(
+  // getStringStorage
+  () => sessionStorage, // or sessionStorage, asyncStorage or alike
+  // // options (optional)
+  // {
+  //   reviver, // optional reviver option for JSON.parse
+  //   replacer, // optional replacer option for JSON.stringify
+  // },
+)
+
+const submitted_storage = createJSONStorage<SubmittedNoteData>(
+  () => sessionStorage,
+)
+
+const auth_storage = createJSONStorage<Auth>(
+  () => sessionStorage,
+)
+
+const authAtom = atomWithStorage<Auth>('user-email', authContent, auth_storage)
+const transcribedAtom = atomWithStorage<TranscribedData>('transcribed-data', transcribedContent, transcribed_storage)
+const selectedCategoryAtom = atom<string>(""); // Initialize with null or a default value
+const submittedDataAtom = atomWithStorage<SubmittedNoteData>('submitted-data', submittedContent, submitted_storage) // Initialize with null or a default value
 
 const voiceNoteAtom = atomWithQuery((get) => {
   const auth = get(authAtom);
@@ -60,19 +126,8 @@ const voiceNoteAtom = atomWithQuery((get) => {
     },
   };
 });
-// Assuming you have the type defined earlier
-export type SubmittedDataType = {
-  english: string | undefined;
-  context: string | undefined | null;
-  audioUrl: string | undefined;
-  email: string | undefined;
-  transcribedText: string | undefined;
-  category: string | null | undefined;
-  lang: string | undefined,
-  duration: number | undefined
-};
 
-const mutateVoiceNoteAtom = atomWithMutation(get => {
+const mutateVoiceNoteAtom = atomWithMutation(() => {
   return ({
     mutationKey: ['voice-notes'],
     mutationFn: async ({ data }: { data: SubmittedDataType }) => {
@@ -97,72 +152,6 @@ const mutateVoiceNoteAtom = atomWithMutation(get => {
     }
   })
 });
-
-
-const selectedLanguageAtom = atom<string | undefined>(undefined);
-const selectedDurationAtom = atom<string | undefined>(undefined);
-export interface TranscribedData {
-  _id?: string;
-  burmese: string;
-  english: string;
-  context: string;
-  audioUrl: string;
-  email: string;
-  editedText?: string;
-  category: string | null;
-}
-const transcribedContent = {
-  burmese: "",
-  english: "",
-  context: "",
-  editedText: "",
-  category: "",
-  audioUrl: "",
-  email: ""
-}
-
-const submittedContent = {
-  english: "",
-  context: "",
-  audioUrl: "",
-  email: "",
-  transcribedText: "",
-  category: "",
-  lang: "",
-  duration: undefined,
-}
-export type noteData = {
-  _id?: string;
-  english: string;
-  context: string;
-  audioUrl: string;
-  email: string;
-  transcribedText?: string;
-  category: string | null;
-  lang: string;
-  duration: undefined | string;
-}
-const transcribed_storage = createJSONStorage<TranscribedData>(
-  // getStringStorage
-  () => sessionStorage, // or sessionStorage, asyncStorage or alike
-  // // options (optional)
-  // {
-  //   reviver, // optional reviver option for JSON.parse
-  //   replacer, // optional replacer option for JSON.stringify
-  // },
-)
-const submitted_storage = createJSONStorage<SubmittedDataType>(
-  () => sessionStorage,
-)
-
-const auth_storage = createJSONStorage<Auth>(
-  () => sessionStorage,
-)
-
-const authAtom = atomWithStorage<Auth>('user-email', emailContent, auth_storage)
-const transcribedAtom = atomWithStorage<TranscribedData>('transcribed-data', transcribedContent, transcribed_storage)
-const selectedCategoryAtom = atom<string>(""); // Initialize with null or a default value
-const submittedDataAtom = atomWithStorage<SubmittedDataType>('submitted-data', submittedContent, submitted_storage) // Initialize with null or a default value
 
 export const submitDataAtom = atom(async (get) => {
   const transcribedData = get(transcribedAtom);
@@ -200,7 +189,7 @@ export const submitDataAtom = atom(async (get) => {
   };
 });
 
-const usersAtom = atomWithQuery((get) => {
+const usersAtom = atomWithQuery(() => {
   return ({
     queryKey: ['users', 'all'],
     queryFn: async () => {

@@ -3,7 +3,7 @@ import React from "react";
 import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is correct
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge"
-import { noteData, useAtom, voiceNoteAtom } from "@/app/store";
+import { SubmittedNoteData, useAtom, voiceNoteAtom } from "@/app/store";
 
 type NoteListProps = {
   category: string;
@@ -35,7 +35,7 @@ const NoteList: React.FC<NoteListProps> = ({category}: {category: string}) => {
         <>
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render notes once loading is finished */}
-            {isSuccess && notes.data.length > 0 &&  notes?.data.map((note: noteData) => (
+            {isSuccess && notes.data.length > 0 &&  notes?.data.map((note: SubmittedNoteData) => (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }} // Initial state for animation
                     animate={{ opacity: 1, y: 0 }} // Final state for animation

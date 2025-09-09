@@ -1,7 +1,6 @@
 import { DurationSelector } from '@/components/duration-selector';
 import { LanguageSelector } from '@/components/language-selector';
 import VoiceRecorder from '@/components/voice-recorder';
-import { useSession } from 'next-auth/react';
 import React from 'react';
 
 const Page = () => {
