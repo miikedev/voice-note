@@ -12,8 +12,8 @@ const VoiceRecorder = () => {
     const { data: session } = useSession();
     const [authData,setAuthData] = useAtom(authAtom)
     const router = useRouter()
-    const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
-    const [selectedDuration, setSelectedDuration] = useAtom(selectedDurationAtom);
+    const [selectedLanguage,] = useAtom(selectedLanguageAtom);
+    const [selectedDuration,] = useAtom(selectedDurationAtom);
 
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
@@ -29,7 +29,7 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder({setTranscribedData, transcribedData, router, authData});
+    } = useRecorder({setTranscribedData, transcribedData, router, authData, selectedLanguage, selectedDuration});
 
     const prefersReducedMotion = usePrefersReducedMotion();
 

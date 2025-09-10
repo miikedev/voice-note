@@ -13,8 +13,8 @@ import { ZodError } from 'zod';
 const Page = () => {
   const router = useRouter();
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom);
-  const [language,] = useAtom(selectedLanguageAtom)
-  const [duration,] = useAtom(selectedDurationAtom)
+  const [language,setLanguage] = useAtom(selectedLanguageAtom)
+  const [duration,setDuration] = useAtom(selectedDurationAtom)
   const [selectedCategory, setSelectedCategory] = useAtom(selectedCategoryAtom);
   const [, setSubmittedData] = useAtom(submittedDataAtom);
   const [{ mutate, status }] = useAtom(mutateVoiceNoteAtom);
@@ -23,7 +23,7 @@ const Page = () => {
     const value = e.target.value;
     setTranscribedData((prev) => ({
       ...prev,
-      burmese: value,
+      transcribedText: value,
     }));
   };
 
@@ -38,7 +38,7 @@ const Page = () => {
   const handleSubmit = () => {
     const finalData: VoiceNoteInput = {
       ...transcribedData,
-      editedText: transcribedData?.editedText || transcribedData?.burmese,
+      editedText: transcribedData?.editedText || transcribedData?.transcribedText,
       category: selectedCategory,
     };
 
@@ -60,7 +60,7 @@ const Page = () => {
       context: parsed.data?.context!,
       audioUrl: parsed.data?.audioUrl!,
       email: parsed.data?.email!,
-      transcribedText: parsed.data?.editedText || parsed.data?.burmese,
+      transcribedText: parsed.data?.editedText || parsed.data?.transcribedText,
       category: parsed.data?.category!,
       lang: language!,
       duration: Number(duration),
@@ -77,7 +77,7 @@ const Page = () => {
               toast.success("Your voice note has been saved");
               setSubmittedData(dataToSend);
               setTranscribedData({
-                burmese: "",
+                transcribedText: "",
                 english: "",
                 context: "",
                 audioUrl: "",
@@ -86,6 +86,8 @@ const Page = () => {
                 category: "",
               });
               setSelectedCategory("");
+              setLanguage("");
+              setDuration("");
               setTimeout(() => {
                 router.push("/voice/list");
               }, 1500);
@@ -103,10 +105,10 @@ const Page = () => {
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <h1 className="text-xl font-semibold">Transcribed Text</h1>
-          <CopyTextButton text={transcribedData?.burmese || ""} />
+          <CopyTextButton text={transcribedData?.transcribedText || ""} />
         </div>
         <Textarea
-          value={transcribedData?.burmese || ""}
+          value={transcribedData?.transcribedText || ""}
           onChange={handleTranscribedChange}
           placeholder="Your transcribed text"
           className="shadow-xs rounded-sm"
@@ -116,7 +118,7 @@ const Page = () => {
       <div className="flex flex-col gap-2">
         <h1 className="text-xl font-semibold">Edit</h1>
         <Textarea
-          value={transcribedData?.editedText ?? transcribedData?.burmese}
+          value={transcribedData?.editedText ?? transcribedData?.transcribedText}
           onChange={handleEditChange}
           placeholder="Your edited text"
           className="shadow-xs rounded-sm"

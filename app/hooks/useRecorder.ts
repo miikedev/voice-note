@@ -15,7 +15,9 @@ const useRecorder = ({
     setTranscribedData,
     transcribedData,
     router,
-    authData
+    authData,
+    selectedLanguage,
+    selectedDuration
 }: UseRecorderArgs): UseRecorderReturn => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
@@ -44,6 +46,8 @@ const useRecorder = ({
                 const formData = new FormData();
                 formData.append('email', authData.user.email);
                 formData.append('audio', recordedBlob, `voice-note-${Date.now()}.ogg`);
+                formData.append("lang", String(selectedLanguage));
+                formData.append("duration", String(selectedDuration));
 
                 try {
                     // Send the audio to your backend API

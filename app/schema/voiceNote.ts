@@ -1,9 +1,13 @@
 import { z } from "zod";
 
 export const voiceNoteSchema = z.object({
-    burmese: z.string().min(1, "Transcribed text is required."),
+    transcribedText: z.string().min(1, "Transcribed text is required."),
     english: z.string().optional(), // optional if not edited yet
-    context: z.string().optional().nullable(),
+    context: z.object({
+        topic: z.string().optional().nullable(),
+        sentiment: z.string().optional().nullable(),
+        summary: z.string().optional().nullable(),
+    }).optional().nullable(),
     audioUrl: z.string().optional(),
     email: z.string().email("Invalid email address").optional(),
     editedText: z

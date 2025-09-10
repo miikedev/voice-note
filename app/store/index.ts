@@ -36,7 +36,7 @@ const selectedDurationAtom = atom<string | undefined>(undefined);
 
 export interface TranscribedData {
   _id?: string;
-  burmese: string;
+  transcribedText: string;
   english: string;
   context: string;
   audioUrl: string;
@@ -46,7 +46,7 @@ export interface TranscribedData {
 }
 
 const transcribedContent = {
-  burmese: "",
+  transcribedText: "",
   english: "",
   context: "",
   editedText: "",
@@ -63,7 +63,7 @@ const submittedContent = {
   transcribedText: "",
   category: "",
   lang: "",
-  duration: undefined,
+  duration: null,
 }
 
 export type SubmittedNoteData = {
@@ -72,10 +72,10 @@ export type SubmittedNoteData = {
   context: string;
   audioUrl: string;
   email: string;
-  transcribedText?: string;
+  transcribedText?: string | null;
   category: string | null;
   lang: string;
-  duration: number;
+  duration: number | null;
 }
 
 const transcribed_storage = createJSONStorage<TranscribedData>(

@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { z, ZodError } from "zod";
 import { useAtom } from "jotai";
-import { authAtom, transcribedAtom } from "@/app/store";
+import { authAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom } from "@/app/store";
 import { useRouter } from "next/navigation";
 
 const voiceNoteFileSchema = z.object({
@@ -27,7 +27,8 @@ const voiceNoteFileSchema = z.object({
 const FileUploadComponent = () => {
   const router = useRouter()
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
-
+  const [language,] = useAtom(selectedLanguageAtom)
+  const [duration,] = useAtom(selectedDurationAtom)
   const [authData,] = useAtom(authAtom)
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -51,15 +52,10 @@ const FileUploadComponent = () => {
       try {
         setIsProcessing(true);
         const formData = new FormData();
-        formData.append("email", String(authData.user.email));
+        formData.append("email", String(authData?.user?.email));
         formData.append("audio", file!, `voice-note-${Date.now()}.ogg`);
-
-        // const response = await fetch("/api/transcribe", {
-        //   method: "POST",
-        //   body: formData,
-        // });
-
-        console.log(formData.getAll('email'))
+        formData.append("lang",String(language));
+        formData.append("duration",String(duration));
 
         await fetch("/api/transcribe", {
           method: "POST",
@@ -74,7 +70,7 @@ const FileUploadComponent = () => {
           setTranscribedData(data.result)
         });
 
-        toast.success("File uploaded successfully!");
+        toast.success("File uploaded is transcribed successfully!");
       } catch (err) {
         console.error(err);
         toast.error("Something went wrong while uploading.");
@@ -100,6 +96,7 @@ const FileUploadComponent = () => {
           {isProcessing ? "Uploading..." : "Upload"}
         </Button>
       </form>
+      {isProcessing ? <div className="font-medium text-sm my-5">Thanks for using our voice transcribed service. It might take for a while. Please wait for a moment.</div> : null}
     </div>
   );
 };
