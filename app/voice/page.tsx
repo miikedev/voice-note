@@ -8,7 +8,7 @@ const Page = () => {
   return (
     <div className='flex flex-col justify-center items-center'>
       <div className='absolute transform translate-y-84'>
-      <VoiceRecorder />
+        <VoiceRecorder />
       </div>
     </div>
   );

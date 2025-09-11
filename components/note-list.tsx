@@ -29,7 +29,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
     const { mutate, isSuccess: isDeleteSuccess } = DeleteVoiceNoteAtom();
 
     const handleNoteDelete = (noteId: string) => {
-        mutate({ noteId })
+        mutate({ noteId, category })
     }
     console.log('notes', notes)
     if (isPending) return (
@@ -41,9 +41,9 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
                     className="flex flex-col gap-2 p-2 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition"
                 >
                     <div className="flex justify-end gap-1">
-                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
-                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
-                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-red-300" />
+                        <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
+                        <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
+                        <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-red-300" />
                     </div>
                     <Skeleton className="mt-5 h-[1.3rem] w-full rounded-lg" />
                 </div>
@@ -57,18 +57,18 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
         <>
             <div className="grid gap-2 md:grid-cols-2">
                 {/* Render notes once loading is finished */}
-                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index) => (
-  <motion.div
-    key={note._id}
-    initial={{ opacity: 0, y: 0 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{
-      duration: 0.25,
-      delay: index * 0.09, // 👈 staggered delay
-    }}
-    className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
-  >
-<p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
+                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index:number) => (
+                    <motion.div
+                        key={note._id}
+                        initial={{ opacity: 0, y: 0 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            duration: 0.35,
+                            delay: index * 0.09, // 👈 staggered delay
+                        }}
+                        className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
+                    >
+                        <p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
                         {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
                         <div className="absolute right-[.5rem] top-[.5rem] flex gap-1">
                             <CopyTextButton text={note.transcribedText ?? ""} />
@@ -79,8 +79,8 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
                             </Button>
                             {/* <DeleteNoteDialog note={note}/> */}
                         </div>
-  </motion.div>
-))}
+                    </motion.div>
+                ))}
             </div>
             {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-justify">no data at {category} notes!</small>}
         </>

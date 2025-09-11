@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react';
 import { LanguageSelector } from './language-selector';
-
+import { motion } from 'framer-motion';
 const VoiceRecorder = () => {
     const { data: session } = useSession();
     const [authData, setAuthData] = useAtom(authAtom)
@@ -44,7 +44,13 @@ const VoiceRecorder = () => {
     }
 
     return (
-        <div>
+        <motion.div 
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+                duration: .4
+            }}
+        >
             {/* {!isProcessingVoice && <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>} */}
             {/* Show waveform animation only while recording */}
 
@@ -101,7 +107,7 @@ const VoiceRecorder = () => {
             )} */}
 
             {isProcessingVoice && <Loader className='animate-spin' />}
-        </div>
+        </motion.div>
     )
 }
 
