@@ -1,5 +1,5 @@
 import { deleteNote } from '@/lib/notes';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
@@ -130,9 +130,9 @@ const voiceNoteAtom = atomWithQuery((get) => {
 
 export const DeleteVoiceNoteAtom = () => {
   const queryClient = useQueryClient();
-  return ({
+  return useMutation({
     mutationKey: ['voice-notes'],
-    mutationFn: async ({ noteId }: { noteId: string }) => {
+    mutationFn: async ({ noteId, category }: { noteId: string, category: string }) => {
       console.log('data in mutation', noteId)
       const formData = new FormData();
       formData.append('noteId', noteId)
@@ -141,7 +141,25 @@ export const DeleteVoiceNoteAtom = () => {
       // const result = await res.json();
       return { success: true, deleted };
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
+    onMutate: async ({ category }) => {
+      console.log('category in on mutate', category);
+      await queryClient.cancelQueries(["voice-notes", category]);
+
+      // Snapshot the previous value
+      const previousNotes = queryClient.getQueryData(["voice-notes", category]);
+
+      // Optimistically update to the new value
+      if (previousNotes) {
+        queryClient.setQueryData(["voice-notes", category], (oldData) => ({
+          ...oldData,
+          data: oldData.data.filter((note) => note._id !== id),
+        }));
+      }
+
+      // Return a context object with the snapshotted value
+      return { previousNotes };
+    },
+    onSettled: ({ category }) => queryClient.invalidateQueries({ queryKey: ['voice-notes', category] }),
   })
 }
 

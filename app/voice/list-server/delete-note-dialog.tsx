@@ -11,16 +11,13 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { deleteNote } from '@/lib/notes';
 import { Trash2 } from 'lucide-react';
-import { DeleteVoiceNoteAtom, useAtom } from '@/app/store';
 type NoteForClient = any
 
-const DeleteNoteDialog: React.FC<{ note: NoteForClient }> = ({ note }) => {
+const DeleteNoteDialog: React.FC<{ note: NoteForClient }> = () => {
     // We’ll render the confirmation dialog around the delete button.
     // If you want to avoid duplicating forms, this component simply wraps the existing form
     // with a confirmation dialog.
-    const [{ mutate, isPending, error, isError, isSuccess }] = useAtom(DeleteVoiceNoteAtom)
 
     return (
         <AlertDialog>
@@ -41,7 +38,7 @@ const DeleteNoteDialog: React.FC<{ note: NoteForClient }> = ({ note }) => {
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     {/* The user confirms; the form submission will run */}
-                    <AlertDialogAction onClick={() => mutate({noteId: String(note._id)})}>
+                    <AlertDialogAction>
                         Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
