@@ -18,6 +18,7 @@ const languages = {
   english: "english",
   japanese: "japanese",
   korea: "korea",
+  chinese: "chinese",
   malaysia: "malaysia",
   thai: "thai",
   german: "german",

@@ -98,7 +98,6 @@ export const columns: ColumnDef<User>[] = [
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <form action={deleteUser}>
                                 <input type="hidden" name="userId" value={user._id} />
                                 <DropdownMenuItem asChild>

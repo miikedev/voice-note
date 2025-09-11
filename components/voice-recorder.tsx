@@ -7,13 +7,13 @@ import { authAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, 
 import { toast } from "sonner"
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react';
+import { LanguageSelector } from './language-selector';
 
 const VoiceRecorder = () => {
     const { data: session } = useSession();
     const [authData,setAuthData] = useAtom(authAtom)
     const router = useRouter()
     const [selectedLanguage,] = useAtom(selectedLanguageAtom);
-    const [selectedDuration,] = useAtom(selectedDurationAtom);
 
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
@@ -29,45 +29,40 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder({setTranscribedData, transcribedData, router, authData, selectedLanguage, selectedDuration});
+    } = useRecorder({setTranscribedData, transcribedData, router, authData, selectedLanguage});
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
     const handleRecordClick = () => {
-        if (selectedDuration && selectedLanguage) {
+        if (selectedLanguage) {
             isRecording ? stopRecording() : startRecording()
         } else {
-            if (!selectedLanguage && !selectedDuration) {
-                toast.warning('Please select duration and language')
-            } else if (!selectedLanguage) {
+            if (!selectedLanguage) {
                 toast.warning('Please select language')
-            } else if (!selectedDuration) {
-                toast.warning('Please select duration')
             }
         }
     }
 
-    console.log('transcribed data', transcribedData)
-
-
     return (
-        <div className="flex flex-col items-center justify-center p-3 rounded-sm max-w-sm mx-auto">
+        <div>
             {/* {!isProcessingVoice && <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>} */}
             {/* Show waveform animation only while recording */}
 
             {/* Record/Stop button (only when no blob yet) */}
             {!isProcessingVoice && !recordingBlob && (
+                <div className='w-full flex flex-col items-center justify-cente'>
                 <button
                     onClick={handleRecordClick}
-                    className={`flex items-center justify-center size-24 rounded-full text-white transition-colors ${isRecording
+                    className={`flex flex-col items-center justify-center size-30 rounded-full text-white transition-colors my-5 ${isRecording
                             ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                             : 'bg-gray-900 hover:bg-gray-700'
                         }`}
                 >
-                    {isRecording ? <StopCircle size={35} /> : <Mic size={35} />}
+                    {isRecording ? <StopCircle size={45} /> : <Mic size={45} />}
                 </button>
+                <LanguageSelector/>
+                </div>
             )}
-
             {!isProcessingVoice && isRecording && !recordingBlob && (
                 <div className="h-40 mb-6 w-56">
                     <WaveformBars

@@ -1,6 +1,9 @@
+import { deleteNote } from '@/lib/notes';
+import { QueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
+import { ObjectId } from 'mongodb';
 import { ISODateString } from 'next-auth';
 import { toast } from 'sonner'
 
@@ -35,7 +38,7 @@ const selectedLanguageAtom = atom<string | undefined>(undefined);
 const selectedDurationAtom = atom<string | undefined>(undefined);
 
 export interface TranscribedData {
-  _id?: string;
+  _id?: string | ObjectId | undefined;
   transcribedText: string;
   english: string;
   context: string;
@@ -100,24 +103,24 @@ const authAtom = atomWithStorage<Auth>('user-email', authContent, auth_storage)
 const transcribedAtom = atomWithStorage<TranscribedData>('transcribed-data', transcribedContent, transcribed_storage)
 const selectedCategoryAtom = atom<string>(""); // Initialize with null or a default value
 const submittedDataAtom = atomWithStorage<SubmittedNoteData>('submitted-data', submittedContent, submitted_storage) // Initialize with null or a default value
-
+export const queryClient = new QueryClient();
 const voiceNoteAtom = atomWithQuery((get) => {
   const auth = get(authAtom);
   const category = get(selectedCategoryAtom);
   const isDescending = get(toggleAtom); // Get the toggle state for sorting
 
   console.log('email in voiceNoteAtom:', auth);
-  console.log('Fetching with email:', auth.user.email, 'and category:', category, 'Descending:', isDescending); // Debug output
-
+  console.log('Fetching with email:', auth?.user?.email, 'and category:', category, 'Descending:', isDescending); // Debug output
+  console.log('selected category', category)
   return {
-    queryKey: ['voice-notes', auth.user.email, category ?? 'all', isDescending], // Add isDescending to queryKey
+    queryKey: ['voice-notes'], // Add isDescending to queryKey
     queryFn: async () => {
-      if (!auth.user.email) {
+      if (!auth?.user?.email) {
         throw new Error("Email is not defined");
       }
 
       // You might want to make additional changes on the server side to handle sort order
-      const res = await fetch(`/api/notes?email=${auth.user.email}&category=${category}&order=${isDescending ? 'desc' : 'asc'}`); // Pass sort order as query param 
+      const res = await fetch(`/api/notes?email=${auth?.user?.email}&category=${category}&order=${isDescending ? 'desc' : 'asc'}`); // Pass sort order as query param 
 
       if (!res.ok) {
         throw new Error("Failed to fetch notes");
@@ -127,10 +130,36 @@ const voiceNoteAtom = atomWithQuery((get) => {
   };
 });
 
+export const DeleteVoiceNoteAtom = atomWithMutation(() => {
+  return ({
+    mutationKey: ['voice-notes'],
+    mutationFn: async ({ noteId }: { noteId: string }) => {
+      console.log('data in mutation', noteId)
+      const formData = new FormData();
+      formData.append('noteId', noteId)
+      // }
+      const deleted = await deleteNote(formData)
+      // const result = await res.json();
+      return { success: true, deleted };
+    },
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: ['voice-notes'] })
+      const previousNotes = queryClient.getQueryData(['voice-notes'])
+      queryClient.setQueryData(['voice-notes'], (old) => console.log(old))
+      // Return a context object with the snapshotted value
+      return { previousNotes }
+    },
+    onSuccess: async (data, variables, context) => {
+      console.log(data)
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
+  })
+});
+
 const mutateVoiceNoteAtom = atomWithMutation(() => {
   return ({
     mutationKey: ['voice-notes'],
-    mutationFn: async ({ data }: { data: SubmittedDataType }) => {
+    mutationFn: async ({ data }: { data: SubmittedNoteData }) => {
       console.log('data in mutation', data)
       const res = await fetch('/api/notes', {
         method: 'POST',
@@ -147,20 +176,18 @@ const mutateVoiceNoteAtom = atomWithMutation(() => {
       const result = await res.json();
       return result;
     },
-    onSuccess: async () => {
-      //  
-    }
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
+
   })
 });
+
+
 
 export const submitDataAtom = atom(async (get) => {
   const transcribedData = get(transcribedAtom);
   const selectedCategory = get(selectedCategoryAtom);
 
-  logger.info({
-    ...transcribedData,
-    category: selectedCategory,
-  })
+
   if (!transcribedData || !selectedCategory) {
     toast.warning("Cannot submit data without transcribed data and category.");
     return;

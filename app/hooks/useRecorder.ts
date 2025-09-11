@@ -17,7 +17,6 @@ const useRecorder = ({
     router,
     authData,
     selectedLanguage,
-    selectedDuration
 }: UseRecorderArgs): UseRecorderReturn => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
@@ -47,7 +46,6 @@ const useRecorder = ({
                 formData.append('email', authData.user.email);
                 formData.append('audio', recordedBlob, `voice-note-${Date.now()}.ogg`);
                 formData.append("lang", String(selectedLanguage));
-                formData.append("duration", String(selectedDuration));
 
                 try {
                     // Send the audio to your backend API
@@ -70,7 +68,6 @@ const useRecorder = ({
 
                 } catch (error) {
                     console.error(error);
-                    // setTranscription('An error occurred during transcription.');
                 }
                 chunksRef.current = [];
             };

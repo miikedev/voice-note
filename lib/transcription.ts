@@ -1,7 +1,8 @@
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
-export async function transcribeAudio(audioBase64: string, lang: string | null, duration: string | null) {
+export async function transcribeAudio(audioBase64: string, lang: string | null) {
+    console.info('hit the transcribe audio func')
     const prompt = `
 You are an AI audio processing service. Your task is to transcribe the provided ${lang} audio, translate it to English, and provide a contextual analysis.
 
@@ -11,18 +12,17 @@ The JSON object must conform to the following schema:
 {
   "transcribedText": "The full transcription of the audio in ${lang}.",
   "english": "The full English translation of the transcription.",
-  "context": {
-    "topic": "A brief 2-5 word description of the main subject.",
-    "sentiment": "A single word describing the overall tone (e.g., 'Neutral', 'Positive', 'Urgent', 'Frustrated').",
-    "summary": "A 1-2 sentence summary of the key points."
-  }
 }
-
 Audio Details:
 - Language: ${lang}
-- Duration: ${duration} min
 - Audio Data: (base64 of audio)
 `;
+
+    // "context": {
+    //     "topic": "A brief 2-5 word description of the main subject.",
+    //         "sentiment": "A single word describing the overall tone (e.g., 'Neutral', 'Positive', 'Urgent', 'Frustrated').",
+    //             "summary": "A 1-2 sentence summary of the key points."
+    // }
 
     const { text } = await generateText({
         model: google('gemini-2.5-flash'),

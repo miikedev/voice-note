@@ -1,11 +1,8 @@
-import { Cagliostro } from 'next/font/google';
+"use server"
+import { revalidatePath } from 'next/cache';
 import clientPromise from '../lib/mongodb'; // Adjust path if necessary
-
-interface AudioText {
-    user_id: string;
-    text: string;
-    createdAt: Date;
-}
+import { ObjectId } from 'mongodb';
+import { queryClient } from '@/app/store';
 
 // async function getNotesByUserId(userId: string): Promise<AudioText[]> {
 //     const client = await clientPromise;
@@ -43,11 +40,13 @@ const COLLECTION_NAME = 'audio_texts';
 //     }
 // }
 
-async function getNotesByEmail(
-    email: string,
-    sortBy: string = 'createdAt', // Default sorting field
-    order: string,
-    category?: string | null,
+export async function getNotesByEmail({ email, sortBy = 'createdAt', order, category }:
+    {
+        email: string,
+        sortBy?: string, // Default sorting field
+        order?: string,
+        category?: string | null
+    },
 ) {
     try {
         const client = await clientPromise;
@@ -87,4 +86,26 @@ async function getNotesByEmail(
 //     }
 // })();
 
-export { clientPromise, DB_NAME, COLLECTION_NAME, getNotesByEmail }
+export async function deleteNote(formData: FormData): Promise<void> {
+    console.log('hit delete note')
+    try {
+        const client = await clientPromise;
+        const db = client.db(DB_NAME);
+        const collection = db.collection(COLLECTION_NAME);
+
+        const noteId = formData.get("noteId")?.toString();
+
+        console.log('note id ', noteId)
+        if (!noteId) throw new Error("NoteId is required");
+
+        const result = await collection.deleteOne({ _id: new ObjectId(noteId) });
+
+        if (result.deletedCount === 0) {
+            throw new Error("Note not found");
+        }
+
+    } catch (error) {
+        console.error("Error deleting note:", error);
+        throw error; // Let Next.js handle the error
+    }
+}

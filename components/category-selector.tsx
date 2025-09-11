@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react";
 import {
   Select,
@@ -22,7 +23,7 @@ import { useAtom } from 'jotai';
 import { selectedCategoryAtom } from '@/app/store';
 import { usePathname } from "next/navigation";
 
-const categories = {
+export const categories = {
   note: {
     label: "Note",
     icon: StickyNote,

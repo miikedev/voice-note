@@ -1,7 +1,7 @@
-import { SubmittedDataType } from "@/app/store";
+import { SubmittedNoteData } from "@/app/store";
 import clientPromise from "@/lib/mongodb";
 
-async function saveTranscription({ data }: { data: SubmittedDataType }) {
+async function saveTranscription({ data }: { data: any }) {
     const client = await clientPromise;
     const db = client.db("voice-note");
 

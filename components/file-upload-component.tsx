@@ -26,7 +26,7 @@ const voiceNoteFileSchema = z.object({
 
 const FileUploadComponent = () => {
   const router = useRouter()
-  const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
+  const [, setTranscribedData] = useAtom(transcribedAtom)
   const [language,] = useAtom(selectedLanguageAtom)
   const [duration,] = useAtom(selectedDurationAtom)
   const [authData,] = useAtom(authAtom)
@@ -55,7 +55,6 @@ const FileUploadComponent = () => {
         formData.append("email", String(authData?.user?.email));
         formData.append("audio", file!, `voice-note-${Date.now()}.ogg`);
         formData.append("lang",String(language));
-        formData.append("duration",String(duration));
 
         await fetch("/api/transcribe", {
           method: "POST",
@@ -96,7 +95,7 @@ const FileUploadComponent = () => {
           {isProcessing ? "Uploading..." : "Upload"}
         </Button>
       </form>
-      {isProcessing ? <div className="font-medium text-sm my-5">Thanks for using our voice transcribed service. It might take for a while. Please wait for a moment.</div> : null}
+      {isProcessing ? <div className="font-medium text-sm my-5">Thanks for using our voice transcribed service . It might take for a while. Please wait for a moment.</div> : null}
     </div>
   );
 };

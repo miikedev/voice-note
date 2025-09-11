@@ -1,5 +1,5 @@
 "use client"
-import { selectedCategoryAtom } from '@/app/store'
+import { authAtom, selectedCategoryAtom } from '@/app/store'
 import { CategorySelector } from '@/components/category-selector'
 import NoteList from '@/components/note-list'
 import NoteSearchInput from '@/components/note-search-input'
@@ -11,6 +11,7 @@ import React from 'react'
 const client = new QueryClient();
 const Page = () => {
   const [category,] = useAtom(selectedCategoryAtom);
+  const [authData,] = useAtom(authAtom)
   return (
     <QueryClientProvider client={client}>
     <div className='w-full'>
@@ -21,7 +22,7 @@ const Page = () => {
         <ToggleUpDownButton />
         </div>
         <NoteSearchInput />
-        <NoteList category={category}/>
+        <NoteList category={category} />
         </div>
     </div>
     </QueryClientProvider>

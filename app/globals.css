@@ -144,3 +144,14 @@
     --sidebar-ring: oklch(0.439 0 0);
   }
 }
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 100deg;
+  inherits: false;
+}
+
+.animated-border {
+  border: 1px solid;
+  border-image: conic-gradient(from var(--border-angle), red, blue, green, red) 1;
+}

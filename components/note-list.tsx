@@ -2,17 +2,37 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is correct
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge"
 import { SubmittedNoteData, useAtom, voiceNoteAtom } from "@/app/store";
+import { CategoryBadge } from "./ui/category-badge";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "./ui/button";
+import { Trash2 } from "lucide-react";
+import { Badge } from "./ui/badge";
+import { deleteNote } from "@/lib/notes";
+import DeleteNoteDialog from "@/app/voice/list-server/delete-note-dialog";
+import CopyTextButton from "./copy-text-button";
+import { DeleteVoiceNoteAtom } from '@/app/store';
+
 
 type NoteListProps = {
-  category: string;
+    category: string;
 };
 
-const NoteList: React.FC<NoteListProps> = ({category}: {category: string}) => {
+const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) => {
 
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
+    const [{ mutate, isSuccess: isDeleteSuccess }] = useAtom(DeleteVoiceNoteAtom)
+
+    const handleNoteDelete = (noteId: string) => {
+        mutate({ noteId })
+    }
+    console.log('notes', notes)
     if (isPending) return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render skeletons while loading */}
@@ -33,23 +53,32 @@ const NoteList: React.FC<NoteListProps> = ({category}: {category: string}) => {
 
     return (
         <>
-        <div className="grid gap-4 md:grid-cols-2">
-            {/* Render notes once loading is finished */}
-            {isSuccess && notes.data.length > 0 &&  notes?.data.map((note: SubmittedNoteData) => (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} // Initial state for animation
-                    animate={{ opacity: 1, y: 0 }} // Final state for animation
-                    transition={{ duration: 0.5 }} // Animation duration
-                    key={note._id}
-                    className="p-4 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition relative"
-                >
-                    <p className="text-md font-semibold mt-[1.1rem]">{note.transcribedText}</p>
-                    <Badge variant="default" className="absolute right-[.5rem] top-[.5rem]">{note.category}</Badge>
-                </motion.div>
-            ))}
-        </div>
-            {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-center">no data at {category} notes!</small>}
-            </>
+            <div className="grid gap-2 md:grid-cols-2">
+                {/* Render notes once loading is finished */}
+                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData) => (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} // Initial state for animation
+                        animate={{ opacity: 1, y: 0 }} // Final state for animation
+                        transition={{ duration: 0.5 }} // Animation duration
+                        key={note._id}
+                        className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
+                    >
+                        <p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
+                        {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
+                        <div className="absolute right-[.5rem] top-[.5rem] flex gap-1">
+                            <CopyTextButton text={note.transcribedText ?? ""} />
+                            <CategoryBadge category={note.category} />
+
+                            <Button onClick={() => handleNoteDelete(String(note._id))} type="submit" variant={"outline"} size={"sm"} className="p-1 border-red-300">
+                                <Trash2 />
+                            </Button>
+                            {/* <DeleteNoteDialog note={note}/> */}
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+            {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-justify">no data at {category} notes!</small>}
+        </>
     );
 };
 

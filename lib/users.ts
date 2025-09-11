@@ -1,7 +1,6 @@
 "use server"
 import { revalidatePath } from "next/cache";
 import clientPromise from "./mongodb";
-import { DB_NAME } from "./notes";
 import { ObjectId } from "mongodb";
 
 type User = {
@@ -12,6 +11,7 @@ type User = {
 };
 
 const COLLECTION_NAME = 'users';
+const DB_NAME = 'voice-note';
 
 export const getUsers = async (): Promise<User[]> => {
     const sortBy = 'createdAt';

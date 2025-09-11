@@ -1,3 +1,4 @@
+"use client"
 import { ArrowUpDown } from 'lucide-react'
 import React, { useState } from 'react'
 import { Toggle } from './ui/toggle'

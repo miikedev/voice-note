@@ -7,10 +7,6 @@ const Page = () => {
 
   return (
     <div className='flex flex-col justify-center items-center'>
-      <div className='flex gap-3 mt-[2.5rem]'>
-        <LanguageSelector />
-        <DurationSelector />
-      </div>
       <div className='absolute transform translate-y-84'>
       <VoiceRecorder />
       </div>
