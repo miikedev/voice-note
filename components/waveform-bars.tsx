@@ -5,7 +5,7 @@ import { useRef } from "react";
 function randomBarAnim(i: number) {
     const base = 0.9 + Math.random() * 0.6;
     const delay = (i * 0.03) % 1.2;
-    const peak = 0.4 + Math.random() * 1.2;
+    const peak = 6.4 + Math.random() * 1.2;
     const mid = (peak + 0.2) / 2;
     const low = 0.2 + Math.random() * 0.25;
     return {
@@ -29,9 +29,7 @@ export default function WaveformBars({
     return (
         <div
             ref={containerRef}
-            className="relative h-40 w-full overflow-hidden rounded-xl 
-
-            "
+            className="relative h-40 w-full overflow-hidden rounded-xl "
         >
             {/* Bars */}
             <div className="absolute inset-0 grid grid-cols-[repeat(40,minmax(0,1fr))] items-end gap-[3px] p-4">

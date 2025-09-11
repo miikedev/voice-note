@@ -57,7 +57,6 @@ const Page = () => {
 
     const dataToSend: SubmittedNoteData = {
       english: parsed.data?.english!,
-      context: parsed.data?.context!,
       audioUrl: parsed.data?.audioUrl!,
       email: parsed.data?.email!,
       transcribedText: parsed.data?.editedText || parsed.data?.transcribedText,
@@ -76,6 +75,11 @@ const Page = () => {
             onSuccess: () => {
               toast.success("Your voice note has been saved");
               setSubmittedData(dataToSend);
+              
+              setTimeout(() => {
+                router.push("/voice/list");
+              }, 500);
+
               setTranscribedData({
                 transcribedText: "",
                 english: "",
@@ -88,9 +92,7 @@ const Page = () => {
               setSelectedCategory("");
               setLanguage("");
               setDuration("");
-              setTimeout(() => {
-                router.push("/voice/list");
-              }, 1500);
+              
             },
           }
         );

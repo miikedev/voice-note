@@ -18,7 +18,6 @@ import DeleteNoteDialog from "@/app/voice/list-server/delete-note-dialog";
 import CopyTextButton from "./copy-text-button";
 import { DeleteVoiceNoteAtom } from '@/app/store';
 
-
 type NoteListProps = {
     category: string;
 };
@@ -27,7 +26,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
 
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
-    const [{ mutate, isSuccess: isDeleteSuccess }] = useAtom(DeleteVoiceNoteAtom)
+    const { mutate, isSuccess: isDeleteSuccess } = DeleteVoiceNoteAtom();
 
     const handleNoteDelete = (noteId: string) => {
         mutate({ noteId })
@@ -39,11 +38,14 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
             {Array.from({ length: 5 }).map((_, index) => (
                 <div
                     key={index}
-                    className="flex flex-col gap-2 p-4 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition"
+                    className="flex flex-col gap-2 p-2 border rounded-2xl shadow-xs bg-white hover:shadow-sm transition"
                 >
-                    <Skeleton className="h-[12px] w-[80%] rounded-full" />
-                    <Skeleton className="mt-2 h-[25px] w-full rounded-lg" />
-                    <Skeleton className="mt-1 h-[15px] w-full rounded-lg" />
+                    <div className="flex justify-end gap-1">
+                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
+                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-gray-100" />
+                    <Skeleton className="h-[1.9rem] w-[10%] rounded-md border border-red-300" />
+                    </div>
+                    <Skeleton className="mt-5 h-[1.3rem] w-full rounded-lg" />
                 </div>
             ))}
         </div>
@@ -55,15 +57,18 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
         <>
             <div className="grid gap-2 md:grid-cols-2">
                 {/* Render notes once loading is finished */}
-                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData) => (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }} // Initial state for animation
-                        animate={{ opacity: 1, y: 0 }} // Final state for animation
-                        transition={{ duration: 0.5 }} // Animation duration
-                        key={note._id}
-                        className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
-                    >
-                        <p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
+                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index) => (
+  <motion.div
+    key={note._id}
+    initial={{ opacity: 0, y: 0 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{
+      duration: 0.25,
+      delay: index * 0.09, // 👈 staggered delay
+    }}
+    className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
+  >
+<p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
                         {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
                         <div className="absolute right-[.5rem] top-[.5rem] flex gap-1">
                             <CopyTextButton text={note.transcribedText ?? ""} />
@@ -74,8 +79,8 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
                             </Button>
                             {/* <DeleteNoteDialog note={note}/> */}
                         </div>
-                    </motion.div>
-                ))}
+  </motion.div>
+))}
             </div>
             {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-justify">no data at {category} notes!</small>}
         </>

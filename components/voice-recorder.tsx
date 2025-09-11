@@ -11,16 +11,16 @@ import { LanguageSelector } from './language-selector';
 
 const VoiceRecorder = () => {
     const { data: session } = useSession();
-    const [authData,setAuthData] = useAtom(authAtom)
+    const [authData, setAuthData] = useAtom(authAtom)
     const router = useRouter()
     const [selectedLanguage,] = useAtom(selectedLanguageAtom);
 
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
-    useEffect(()=> {if(session) setAuthData({...authData})},[])
+    useEffect(() => { if (session) setAuthData({ ...authData }) }, [])
 
     console.log('auth data', authData)
-    
+
     const {
         isRecording,
         recordingBlob,
@@ -29,7 +29,7 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder({setTranscribedData, transcribedData, router, authData, selectedLanguage});
+    } = useRecorder({ setTranscribedData, transcribedData, router, authData, selectedLanguage });
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -50,26 +50,26 @@ const VoiceRecorder = () => {
 
             {/* Record/Stop button (only when no blob yet) */}
             {!isProcessingVoice && !recordingBlob && (
-                <div className='w-full flex flex-col items-center justify-cente'>
-                <button
-                    onClick={handleRecordClick}
-                    className={`flex flex-col items-center justify-center size-30 rounded-full text-white transition-colors my-5 ${isRecording
-                            ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                            : 'bg-gray-900 hover:bg-gray-700'
-                        }`}
-                >
-                    {isRecording ? <StopCircle size={45} /> : <Mic size={45} />}
-                </button>
-                <LanguageSelector/>
-                </div>
-            )}
-            {!isProcessingVoice && isRecording && !recordingBlob && (
-                <div className="h-40 mb-6 w-56">
-                    <WaveformBars
-                        barAnims={Array.from({ length: 40 }, (_, i) => randomBarAnim(i))}
-                        recording={isRecording}
-                        prefersReducedMotion={prefersReducedMotion}
-                    />
+                <div className="w-full flex flex-col items-center justify-center">
+                    <button
+                        onClick={handleRecordClick}
+                        className={`flex flex-col items-center justify-center size-30 rounded-full text-white transition-colors my-5 ${isRecording
+                                ? "bg-red-500 hover:bg-red-600 animate-pulse"
+                                : "bg-gray-900 hover:bg-gray-700"
+                            }`}
+                    >
+                        {isRecording ? <StopCircle size={45} /> : <Mic size={45} />}
+                    </button>
+
+                    <LanguageSelector />
+
+                    <div className="h-[10rem] w-50">
+                        <WaveformBars
+                            barAnims={Array.from({ length: 40 }, (_, i) => randomBarAnim(i))}
+                            recording={isRecording}
+                            prefersReducedMotion={prefersReducedMotion}
+                        />
+                    </div>
                 </div>
             )}
 

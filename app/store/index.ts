@@ -1,5 +1,5 @@
 import { deleteNote } from '@/lib/notes';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
@@ -72,7 +72,6 @@ const submittedContent = {
 export type SubmittedNoteData = {
   _id?: string;
   english: string;
-  context: string;
   audioUrl: string;
   email: string;
   transcribedText?: string | null;
@@ -96,7 +95,7 @@ const submitted_storage = createJSONStorage<SubmittedNoteData>(
 )
 
 const auth_storage = createJSONStorage<Auth>(
-  () => sessionStorage,
+  () => localStorage,
 )
 
 const authAtom = atomWithStorage<Auth>('user-email', authContent, auth_storage)
@@ -113,12 +112,11 @@ const voiceNoteAtom = atomWithQuery((get) => {
   console.log('Fetching with email:', auth?.user?.email, 'and category:', category, 'Descending:', isDescending); // Debug output
   console.log('selected category', category)
   return {
-    queryKey: ['voice-notes'], // Add isDescending to queryKey
+    queryKey: ['voice-notes', category], // Add isDescending to queryKey
     queryFn: async () => {
       if (!auth?.user?.email) {
         throw new Error("Email is not defined");
       }
-
       // You might want to make additional changes on the server side to handle sort order
       const res = await fetch(`/api/notes?email=${auth?.user?.email}&category=${category}&order=${isDescending ? 'desc' : 'asc'}`); // Pass sort order as query param 
 
@@ -130,7 +128,8 @@ const voiceNoteAtom = atomWithQuery((get) => {
   };
 });
 
-export const DeleteVoiceNoteAtom = atomWithMutation(() => {
+export const DeleteVoiceNoteAtom = () => {
+  const queryClient = useQueryClient();
   return ({
     mutationKey: ['voice-notes'],
     mutationFn: async ({ noteId }: { noteId: string }) => {
@@ -142,19 +141,9 @@ export const DeleteVoiceNoteAtom = atomWithMutation(() => {
       // const result = await res.json();
       return { success: true, deleted };
     },
-    onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ['voice-notes'] })
-      const previousNotes = queryClient.getQueryData(['voice-notes'])
-      queryClient.setQueryData(['voice-notes'], (old) => console.log(old))
-      // Return a context object with the snapshotted value
-      return { previousNotes }
-    },
-    onSuccess: async (data, variables, context) => {
-      console.log(data)
-    },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
   })
-});
+}
 
 const mutateVoiceNoteAtom = atomWithMutation(() => {
   return ({

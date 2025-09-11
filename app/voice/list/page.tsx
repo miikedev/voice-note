@@ -15,13 +15,13 @@ const Page = () => {
   return (
     <QueryClientProvider client={client}>
     <div className='w-full'>
-      <div className='w-[95%] lg:w-[60%] flex flex-col gap-3 mx-auto'>
+      <div className='w-[95%] lg:w-[60%] flex flex-col gap-3 px-3 mx-auto transform translate-y-10'>
         <h1 className='text-2xl font-semibold'>History</h1>
-        <div className='flex gap-3 items-center'>
+        <div className='flex items-center gap-3'>
         <CategorySelector />
         <ToggleUpDownButton />
         </div>
-        <NoteSearchInput />
+        {/* <NoteSearchInput /> */}
         <NoteList category={category} />
         </div>
     </div>
