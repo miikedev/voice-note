@@ -12,32 +12,34 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const { status } = useSession();
-    const router = useRouter();
-  
-    useEffect(() => {
-      if (status === "loading") return; // wait for session to resolve
-  
-      // Redirect to /login if NOT authenticated
-      if (status === "unauthenticated") {
-        router.push("/login");
-      }
-    }, [status, router]);
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return; // wait for session to resolve
+
+    // Redirect to /login if NOT authenticated
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
   return (
 
 
-   <div className="flex flex-col h-screen">
-    <div className="sticky flex justify-end top-[1.2rem] px-5 z-50 gap-3">
+    <div className="flex flex-col h-screen">
+      <div className="sticky flex justify-end top-[1.2rem] px-5 z-50 gap-3">
         <Button size={"icon"} onClick={() => signOut()}>
-            <LogOutIcon />
+          <LogOutIcon />
         </Button>
         <Setting />
-    </div>
-    <div className="flex-grow">
+      </div>
+      <div className="flex-grow">
         {children}
+      </div>
+      <div className="fixed bottom-10 left-0 right-0 flex justify-center">
+        <PageNavs />
+      </div>
     </div>
-
-</div>
 
   );
 }

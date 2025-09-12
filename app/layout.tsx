@@ -5,7 +5,6 @@ import "./globals.css";
 import { SessionProvider } from 'next-auth/react';
 import JotaiProvider from "@/components/jotai-provider";
 import { Toaster } from "sonner";
-import PageNavs from "@/components/page-navs";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -44,9 +43,6 @@ export default function RootLayout({
             {children}
           </SessionProvider>
         </JotaiProvider>
-        <div className="fixed bottom-10 left-0 right-0 flex justify-center">
-          <PageNavs />
-        </div>
       </body>
     </html>
   );
