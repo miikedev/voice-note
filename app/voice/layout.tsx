@@ -36,9 +36,7 @@ export default function Layout({
     <div className="flex-grow">
         {children}
     </div>
-    <div className="sticky bottom-[2.5rem]">
-        <PageNavs />
-    </div>
+
 </div>
 
   );
