@@ -36,7 +36,7 @@ export default function Layout({
     <div className="flex-grow">
         {children}
     </div>
-    <div className="sticky flex justify-center bottom-[2.5rem]">
+    <div className="sticky bottom-[2.5rem]">
         <PageNavs />
     </div>
 </div>

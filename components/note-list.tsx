@@ -31,7 +31,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
     const handleNoteDelete = (noteId: string) => {
         mutate({ noteId, category })
     }
-    console.log('notes', notes)
+
     if (isPending) return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render skeletons while loading */}
@@ -54,36 +54,33 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
     if (isError) return <div>An error has occurred: {error.message}</div>;
 
     return (
-        <>
-            <div className="grid gap-2 md:grid-cols-2">
-                {/* Render notes once loading is finished */}
-                {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index:number) => (
-                    <motion.div
-                        key={note._id}
-                        initial={{ opacity: 0, y: 0 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.35,
-                            delay: index * 0.09, // 👈 staggered delay
-                        }}
-                        className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
-                    >
-                        <p className="text-md font-semibold mt-[2.5rem]">{note.transcribedText}</p>
-                        {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
-                        <div className="absolute right-[.5rem] top-[.5rem] flex gap-1">
-                            <CopyTextButton text={note.transcribedText ?? ""} />
-                            <CategoryBadge category={note.category} />
-
-                            <Button onClick={() => handleNoteDelete(String(note._id))} type="submit" variant={"outline"} size={"sm"} className="p-1 border-red-300">
-                                <Trash2 />
-                            </Button>
-                            {/* <DeleteNoteDialog note={note}/> */}
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
+        <div className="grid gap-2 md:grid-cols-2 pb-[10rem]">
+            {/* Render notes once loading is finished */}
+            {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index: number) => (
+                <motion.div
+                    key={note._id}
+                    initial={{ opacity: 0, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                        duration: 0.35,
+                        delay: index * 0.09, // 👈 staggered delay
+                    }}
+                    className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
+                >
+                    <p className="text-md font-light mt-[2.5rem]">{note.transcribedText}</p>
+                    {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
+                    <div className="absolute right-[.5rem] top-[.5rem] flex gap-1">
+                        <CopyTextButton text={note.transcribedText ?? ""} />
+                        <CategoryBadge category={note.category} />
+                        <Button onClick={() => handleNoteDelete(String(note._id))} type="submit" variant={"outline"} size={"sm"} className="p-1 border-red-300">
+                            <Trash2 />
+                        </Button>
+                        {/* <DeleteNoteDialog note={note}/> */}
+                    </div>
+                </motion.div>
+            ))}
             {isSuccess && notes.data.length == 0 && <small className="text-gray-500 text-justify">no data at {category} notes!</small>}
-        </>
+        </div>
     );
 };
 

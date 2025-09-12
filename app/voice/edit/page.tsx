@@ -65,8 +65,6 @@ const Page = () => {
       duration: Number(duration),
     };
 
-    console.log('data', dataToSend)
-
     if (parsed.success) {
       try {
         mutate(
@@ -89,10 +87,10 @@ const Page = () => {
                 editedText: "",
                 category: "",
               });
+
               setSelectedCategory("");
               setLanguage("");
               setDuration("");
-              
             },
           }
         );
@@ -103,7 +101,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-5 py-15 w-96 mx-auto">
+    <div className="flex flex-col gap-6 px-5 py-5 w-96 mx-auto">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <h1 className="text-xl font-semibold">Transcribed Text</h1>
@@ -113,7 +111,7 @@ const Page = () => {
           value={transcribedData?.transcribedText || ""}
           onChange={handleTranscribedChange}
           placeholder="Your transcribed text"
-          className="shadow-xs rounded-sm"
+          className="shadow-xs rounded-sm font-light"
         />
       </div>
 
@@ -123,7 +121,7 @@ const Page = () => {
           value={transcribedData?.editedText ?? transcribedData?.transcribedText}
           onChange={handleEditChange}
           placeholder="Your edited text"
-          className="shadow-xs rounded-sm"
+          className="shadow-xs rounded-sm font-light"
         />
       </div>
 

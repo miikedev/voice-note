@@ -24,12 +24,12 @@ const languages = {
   german: "german",
 };
 
-export function LanguageSelector() {
+export function LanguageSelector({className}) {
   const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
 
   return (
     <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-      <SelectTrigger className="w-[170px]">
+      <SelectTrigger className={`w-[170px] ${className}`}>
         <SelectValue placeholder="Select a language" />
       </SelectTrigger>
       <SelectContent>

@@ -102,7 +102,9 @@ const authAtom = atomWithStorage<Auth>('user-email', authContent, auth_storage)
 const transcribedAtom = atomWithStorage<TranscribedData>('transcribed-data', transcribedContent, transcribed_storage)
 const selectedCategoryAtom = atom<string>(""); // Initialize with null or a default value
 const submittedDataAtom = atomWithStorage<SubmittedNoteData>('submitted-data', submittedContent, submitted_storage) // Initialize with null or a default value
+
 export const queryClient = new QueryClient();
+
 const voiceNoteAtom = atomWithQuery((get) => {
   const auth = get(authAtom);
   const category = get(selectedCategoryAtom);
@@ -129,7 +131,6 @@ const voiceNoteAtom = atomWithQuery((get) => {
 });
 
 export const DeleteVoiceNoteAtom = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['voice-notes'],
     mutationFn: async ({ noteId, category }: { noteId: string, category: string }) => {
@@ -150,10 +151,13 @@ export const DeleteVoiceNoteAtom = () => {
 
       // Optimistically update to the new value
       if (previousNotes) {
-        queryClient.setQueryData(["voice-notes", category], (oldData) => ({
-          ...oldData,
-          data: oldData.data.filter((note) => note._id !== id),
-        }));
+        queryClient.setQueryData(["voice-notes", category], (oldData) => {
+          console.log('old data', oldData)
+          return {
+            ...oldData,
+            data: oldData.data.filter((note) => note._id !== id),
+          }
+        });
       }
 
       // Return a context object with the snapshotted value

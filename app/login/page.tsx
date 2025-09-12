@@ -42,22 +42,38 @@ const LoginPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center h-screen gap-5 px-6">
-      <div className="w-96 mx-auto flex flex-col gap-2">
-        <div className="w-96">
-          <h1 className="text-5xl mb-3 font-extrabold">Voice Note App</h1>
-          {/* <h3 className="text-xl mb-2 font-regular">Login to your account</h3> */}
-          <div className="ml-1 text-xl font-bold">
-            <span className="text-4xl font-medium">W</span><span className="inline relative right-1">elcome to New Note-taking 
-              <span className="text-3xl relative left-3 font-medium">E</span>
-              <span className="inline relative left-3">ra</span>
-                </span> <NotebookText size={32} className="inline bottom-2 relative left-2" />
+    <div className="flex flex-col justify-center h-screen gap-8 px-4 sm:px-6">
+      <div className="mx-auto flex flex-col gap-4 w-full max-w-md">
+        <div className="">
+          <h1 className="text-5xl sm:text-4xl md:text-5xl mb-3 font-extrabold">
+            Voice Note App
+          </h1>
+
+          <div className="ml-0 text-lg sm:text-xl font-bold leading-snug">
+            <span className="text-2xl sm:text-3xl md:text-4xl font-medium">W</span>
+            <span className="inline relative right-[.18rem]">
+              elcome to New Note-taking
+              <span className="text-xl sm:text-2xl md:text-3xl relative left-2 font-medium">
+                E
+              </span>
+              <span className="inline relative left-2">ra</span>
+            </span>
+            <NotebookText
+              size={28}
+              className="inline bottom-1 sm:bottom-2 relative left-2"
+            />
           </div>
         </div>
-        <Button size='lg' onClick={handleSignIn} className="rounded mt-2 w-[15rem] text-lg">
+
+        <Button
+          size="lg"
+          onClick={handleSignIn}
+          className="rounded mt-2 w-full sm:w-[15rem] text-base sm:text-lg"
+        >
           <GoogleIcon /> Sign in with Google
         </Button>
-        {status === "loading" && <LoadingMessage />}
+
+
       </div>
     </div>
   );

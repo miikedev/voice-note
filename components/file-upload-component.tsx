@@ -95,7 +95,7 @@ const FileUploadComponent = () => {
           {isProcessing ? "Uploading..." : "Upload"}
         </Button>
       </form>
-      {isProcessing ? <div className="font-medium text-sm my-5">Thanks for using our voice transcribed service . It might take for a while. Please wait for a moment.</div> : null}
+      {isProcessing ? <div className="font-medium text-sm my-5">Thanks for using our voice transcribed service. It might take for a while. Please wait for a moment.</div> : null}
     </div>
   );
 };

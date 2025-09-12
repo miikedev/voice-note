@@ -9,7 +9,7 @@ const PageNavs = () => {
     return (
         <div className="flex justify-center">
             <Tabs defaultValue="account" className="bg-transparent">
-                <TabsList className='h-[5rem] w-[15rem] rounded-xl flex gap-1 backdrop-blur-md bg-white/30 border border-white/20'>
+                <TabsList className='h-[5rem] w-[15rem] rounded-xl flex gap-1 backdrop-blur-sm bg-white/20 border border-white/20'>
                     <TabsTrigger 
                         className='opacity-80 text-black bg-white/20 hover:bg-white/40 rounded-lg transition duration-200' 
                         value="voice" 
