@@ -77,7 +77,7 @@ const UrlUploadComponent = () => {
                 <Button type="submit">Upload</Button>
             </form>
             {isPending && <h1 className="my-3">Loading...</h1>}
-            {isSuccess && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="my-10 mb-[8rem] flex flex-col gap-4 text-center">
+            {isSuccess && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="my-5 mb-[8rem] flex flex-col gap-4 text-center">
             <Button onClick={() => handleTranscribe({data: data?.download_link!})} variant="link">
                 <div className="mb-4"> {data?.title} </div>
             </Button>
