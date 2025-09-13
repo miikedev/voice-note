@@ -6,14 +6,13 @@ import { Button } from "./ui/button";
 import { useAtom } from "jotai";
 import { authAtom, mutateUrlAtom, youtubeToMp3Atom } from "@/app/store";
 import Image from "next/image";
-import { getMp3AsBase64, transcribeAudio } from "@/lib/transcription";
-import { ChevronDownSquareIcon, ChevronRightSquare } from "lucide-react";
-import { parse } from "path";
+import { transcribeAudio } from "@/lib/transcription";
 import Link from "next/link";
+import { motion } from "framer-motion";
 const UrlUploadComponent = () => {
     const [data, setData] = useAtom(youtubeToMp3Atom);
 
-    const [authData, setAuthData] = useAtom(authAtom);
+    const [authData,] = useAtom(authAtom);
 
     const [isDownloaded, setIsDownloaded] = useState(false);
     // Form submit handler (client-side)
@@ -55,14 +54,11 @@ const UrlUploadComponent = () => {
 
     const handleTranscribe = async({data}: {data: string}) => {
         console.log('data in handle transcribe', data)
-        setIsDownloaded(true)
         // const based64blob = await getMp3AsBase64(data);
         // console.log('base 64 blob', based64blob)
-
-            setIsDownloaded(true)
-            const parsedData = await transcribeAudio(data.download_link, 'burmese');
-            if(parsedData) setIsDownloaded(false);
-            console.log('parsed data', parsedData)
+        // const parsedData = await transcribeAudio(data.download_link, 'burmese');
+        // if(parsedData) setIsDownloaded(false);
+        // console.log('parsed data', parsedData)
 
     }
     console.log('data', data)
@@ -82,7 +78,7 @@ const UrlUploadComponent = () => {
                 <Button type="submit">Upload</Button>
             </form>
             {isPending && <h1 className="my-3">Loading...</h1>}
-            {isSuccess && <div className="my-10 flex flex-col gap-4 text-center">
+            {isSuccess && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="my-10 flex flex-col gap-4 text-center">
                 
             <Button onClick={() => handleTranscribe({data: data?.download_link!})} variant="link">
                 <div className="mb-4"> {data?.title} </div>
@@ -100,7 +96,7 @@ const UrlUploadComponent = () => {
             </Button>
             </div>
             </div>
-            </div>
+            </motion.div>
             }
         </div>
     );
