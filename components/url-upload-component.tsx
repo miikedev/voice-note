@@ -63,12 +63,11 @@ const UrlUploadComponent = () => {
     }
     console.log('data', data)
     return (
-        <div className="flex flex-col gap-4 max-w-md mx-auto">
+        <div className="flex flex-col gap-4 max-w-md mx-auto px-3">
             <h1 className="text-xl font-bold">Upload your YouTube URL</h1>
             <form
                 action={handleUrlUpload}
                 className="flex gap-2 items-center"
-
             >
                 <Input
                     name="url"
@@ -78,8 +77,7 @@ const UrlUploadComponent = () => {
                 <Button type="submit">Upload</Button>
             </form>
             {isPending && <h1 className="my-3">Loading...</h1>}
-            {isSuccess && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="my-10 flex flex-col gap-4 text-center">
-                
+            {isSuccess && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="my-10 mb-[8rem] flex flex-col gap-4 text-center">
             <Button onClick={() => handleTranscribe({data: data?.download_link!})} variant="link">
                 <div className="mb-4"> {data?.title} </div>
             </Button>
@@ -92,7 +90,7 @@ const UrlUploadComponent = () => {
             </Button>
             </Link>
             <Button onClick={() => handleTranscribe({data: data?.download_link!})} variant="default" disabled>
-                transcribe (not available)
+            transcribe (not available)
             </Button>
             </div>
             </div>
