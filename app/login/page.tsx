@@ -72,8 +72,6 @@ const LoginPage = () => {
         >
           <GoogleIcon /> Sign in with Google
         </Button>
-
-
       </div>
     </div>
   );

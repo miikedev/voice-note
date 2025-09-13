@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Provider } from 'jotai'
-import { LogOut } from "lucide-react";
+import { LogOut, LogOutIcon } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function Layout({
@@ -17,9 +17,10 @@ export default function Layout({
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
-          <SidebarTrigger className="-ml-1" /><Button onClick={() => signOut()}>
-            <LogOut />
-          </Button>
+          <SidebarTrigger className="-ml-1" />
+            <Button size={"icon"} onClick={() => signOut({ callbackUrl: "/login" })} >
+                      <LogOutIcon />
+                    </Button>
         </header>
         <main className="px-5">
         {children}

@@ -56,7 +56,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
     return (
         <div className="grid gap-2 md:grid-cols-2 py-3 pb-32">
             {/* Render notes once loading is finished */}
-            {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index: number) => (
+            {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index: number) => (  
                 <motion.div
                     key={note._id}
                     initial={{ opacity: 0, y: 0 }}

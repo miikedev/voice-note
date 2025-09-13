@@ -1,8 +1,16 @@
+import { getServerSession } from 'next-auth';
 import React from 'react'
+import { authOptions } from '../api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
-const Page = () => {
+const Page = async() => {
+  const session = await getServerSession(authOptions);
+  console.log('dashboard session', session);
+  if (session?.user?.isAdmin !== true) {
+    redirect("/"); // ✅ kick out if not logged in
+  }
   return (
-    <div>Dashboard Page</div>
+    <div className='p-5'>Dashboard Page</div>
   )
 }
 

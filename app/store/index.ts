@@ -192,6 +192,38 @@ const mutateVoiceNoteAtom = atomWithMutation(() => {
   })
 });
 
+type mp3Data = {
+  title?: string
+  linkDownload?: string
+  thumbnail?: string
+}
+
+export const youtubeToMp3Atom = atom<mp3Data>({ title: "", linkDownload: "", thumbnail: "" });
+
+export const mutateUrlAtom = atomWithMutation(() => {
+  return ({
+    mutationKey: ['upload-url'],
+    mutationFn: async ({ url, email }: { url: string, email: string }) => {
+      console.log('data in mutation', url)
+      const res = await fetch(`/api/youtube-to-mp3?url=${url}&email=${email}`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save voice note');
+      }
+
+      const result = await res.json();
+      return {
+        title: result.data.title,
+        download_link: result.data.linkDownload,
+        thumbnail: result.data.thumbnail.thumbnails[result.data.thumbnail.thumbnails.length - 1].url
+      };
+
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
+  })
+});
 
 
 export const submitDataAtom = atom(async (get) => {

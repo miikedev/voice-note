@@ -50,7 +50,7 @@ export async function createUser(formData: FormData): Promise<void> {
         const collection = db.collection('users');
         const email = formData.get('email')
         await collection.insertOne(
-            { email },
+            { email, createdAt: new Date() },
             // { $set: { apiKey, updatedAt: new Date() } },
             // { upsert: true }
         );

@@ -19,8 +19,6 @@ const VoiceRecorder = () => {
 
     useEffect(() => { if (session) setAuthData({ ...authData }) }, [])
 
-    console.log('auth data', authData)
-
     const {
         isRecording,
         recordingBlob,

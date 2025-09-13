@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export interface User {
     _id: ObjectId;
@@ -27,7 +29,7 @@ const initialState = {
     message: null
 }
 const UsersList: React.FC = async () => {
-
+    const session = await getServerSession(authOptions)
     const users = await getUsers();
 
 

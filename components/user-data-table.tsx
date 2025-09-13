@@ -84,6 +84,23 @@ export const columns: ColumnDef<User>[] = [
         cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
     {
+        accessorKey: "createdAt",
+        header: ({ column }) => {
+            console.log('column', column)
+            return (
+                <div className="flex justify-start">
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Created At
+                    </Button>
+                </div>
+            )
+        },
+        cell: ({ row }) => <div className="lowercase">{row.getValue("createdAt")}</div>,
+    },
+    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {

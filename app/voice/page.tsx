@@ -1,5 +1,3 @@
-import { DurationSelector } from '@/components/duration-selector';
-import { LanguageSelector } from '@/components/language-selector';
 import VoiceRecorder from '@/components/voice-recorder';
 import React from 'react';
 

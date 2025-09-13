@@ -37,12 +37,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster richColors position="bottom-right" />
-        <JotaiProvider>
-          <SessionProvider baseUrl="/">
+        <SessionProvider baseUrl="/">
+          <Toaster richColors position="bottom-right" />
+          <JotaiProvider>
             {children}
-          </SessionProvider>
-        </JotaiProvider>
+          </JotaiProvider>
+        </SessionProvider>
       </body>
     </html>
   );

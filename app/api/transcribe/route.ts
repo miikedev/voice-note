@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
         const audioBase64 = Buffer.from(audioBytes).toString("base64");
 
         //transcribing audio
-        const parsedData = await transcribeAudio(audioBase64, lang);
+        const parsedData = await transcribeAudio(audioBase64, lang, blob.url);
 
-        console.log('parsed data', parsedData)
+        console.log('parsed data', parsedData);
         // logger.info("Saving transcription to database...");
         // await saveTranscription(blob.url, parsedData, email);
 
