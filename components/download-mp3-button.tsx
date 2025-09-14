@@ -50,7 +50,7 @@ export default function DownloadButton({ downloadUrl, title }: DownloadButtonPro
         }
 
         // Combine all chunks into a Blob
-        const blob = new Blob(chunks);
+        const blob = new Blob(chunks as BlobPart[]);
         const blobUrl = URL.createObjectURL(blob);
 
         // Trigger a download
