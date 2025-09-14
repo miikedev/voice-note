@@ -192,7 +192,7 @@ const mutateVoiceNoteAtom = atomWithMutation(() => {
   })
 });
 
-type mp3Data = {
+export type mp3Data = {
   title?: string
   linkDownload?: string
   thumbnail?: string
@@ -200,7 +200,7 @@ type mp3Data = {
 
 export const youtubeToMp3Atom = atom<mp3Data>({ title: "", linkDownload: "", thumbnail: "" });
 
-export const mutateUrlAtom = atomWithMutation(() => {
+export const downloadMp3Atom = atomWithMutation(() => {
   return ({
     mutationKey: ['upload-url'],
     mutationFn: async ({ url, email }: { url: string, email: string }) => {
@@ -216,12 +216,35 @@ export const mutateUrlAtom = atomWithMutation(() => {
       const result = await res.json();
       return {
         title: result.data.title,
-        download_link: result.data.linkDownload,
-        thumbnail: result.data.thumbnail.thumbnails[result.data.thumbnail.thumbnails.length - 1].url
+        linkDownload: result.data.linkDownload,
+        thumbnail: result.data.thumbnailUrl
       };
 
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['voice-notes'] }),
+  })
+});
+
+export const useStreamMp3 = atomWithMutation(() => {
+  return ({
+    mutationKey: ['stream'],
+    mutationFn: async ({ url, title }: { url: string, title: string }) => {
+      console.log('data in mutation', url)
+      const res = await fetch(`/api/stream-mp3?url=${url}&title=${title}`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) throw new Error("Failed to download MP3");
+
+      const blob = await res.blob();
+      const downloadedUrl = URL.createObjectURL(blob);
+
+      return {
+        success: true,
+        url: downloadedUrl,
+        title
+      };
+
+    },
   })
 });
 

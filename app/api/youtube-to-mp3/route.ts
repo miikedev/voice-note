@@ -1,9 +1,12 @@
 // app/api/youtube-to-mp3/route.ts
 
 import { extractYoutubeVideoId } from "@/lib/blob";
-import { getMp3Blob, transcribeAudio } from "@/lib/transcription";
 import { NextRequest, NextResponse } from "next/server";
-import { parse } from "path";
+
+// (slugify function remains the same)
+export function slugify(text: string): string {
+    return text.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^\w\s.-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -33,18 +36,25 @@ export async function POST(req: NextRequest) {
 
         const { title, linkDownload, thumbnail } = JSON.parse(data)
 
+        const thumbnailUrl = thumbnail?.thumbnails?.[thumbnail.thumbnails.length - 1]?.url || '';
+
+
         // console.log(donwload_link)
         // const mp3blob = await getMp3Blob(donwload_link);
         // const parsedData = await transcribeAudio(mp3blob!, 'burmese')
 
         return NextResponse.json({
             success: true, data: {
-                title, linkDownload, thumbnail
+                title, linkDownload, thumbnailUrl
             }
         });
 
     } catch (err) {
-        console.error("❌ API Error:", err);
-        return NextResponse.json({ success: false, error: "Failed to fetch MP3" }, { status: 500 });
+        // ... (catch block remains the same)
+        console.error("❌ API Route Error:", err instanceof Error ? err.message : String(err));
+        return NextResponse.json(
+            { success: false, error: "Failed to process the YouTube URL. Please try again later." },
+            { status: 500 }
+        );
     }
 }

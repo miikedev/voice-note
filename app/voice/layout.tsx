@@ -27,7 +27,7 @@ export default function Layout({
 
 
     <div className="flex flex-col h-screen">
-      <div className="sticky flex justify-end top-[1.2rem] px-5 z-50 gap-3">
+      <div className="sticky flex justify-end top-[1.2rem] pr-4 z-50 gap-3">
         <Button size={"icon"} onClick={() => signOut()}>
           <LogOutIcon />
         </Button>
