@@ -84,6 +84,7 @@ Audio Details:
 
     const cleanedText = text.replace(/```json\s*|\s*```/g, '');
 
+    console.log('cleaned text', cleanedText)
     let parsedData;
     try {
         parsedData = JSON.parse(cleanedText);

@@ -40,11 +40,11 @@ const useRecorder = ({
             };
 
             mediaRecorder.onstop = async () => {
-                const recordedBlob = new Blob(chunksRef.current, { type: 'audio/ogg' });
+                const recordedBlob = new Blob(chunksRef.current, { type: 'audio/mp3' });
                 setRecordingBlob(recordedBlob);
                 const formData = new FormData();
                 formData.append('email', authData.user.email);
-                formData.append('audio', recordedBlob, `voice-note-${Date.now()}.ogg`);
+                formData.append('audio', recordedBlob, `voice-note-${Date.now()}.mp3`);
                 formData.append("lang", String(selectedLanguage));
 
                 try {

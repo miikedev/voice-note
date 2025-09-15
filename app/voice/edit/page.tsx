@@ -1,6 +1,6 @@
 "use client";
 import { voiceNoteSchema, VoiceNoteInput } from '@/app/schema/voiceNote';
-import { mutateVoiceNoteAtom, selectedCategoryAtom, selectedDurationAtom, selectedLanguageAtom, submittedDataAtom, SubmittedNoteData, transcribedAtom, useAtom } from '@/app/store';
+import { authAtom, mutateVoiceNoteAtom, selectedCategoryAtom, selectedDurationAtom, selectedLanguageAtom, submittedDataAtom, SubmittedNoteData, transcribedAtom, useAtom } from '@/app/store';
 import { CategorySelector } from '@/components/category-selector';
 import CopyTextButton from '@/components/copy-text-button';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { ZodError } from 'zod';
 
 const Page = () => {
   const router = useRouter();
+  const [authData,] = useAtom(authAtom);
   const [transcribedData, setTranscribedData] = useAtom(transcribedAtom);
   const [language,setLanguage] = useAtom(selectedLanguageAtom)
   const [duration,setDuration] = useAtom(selectedDurationAtom)
@@ -40,6 +41,7 @@ const Page = () => {
       ...transcribedData,
       editedText: transcribedData?.editedText || transcribedData?.transcribedText,
       category: selectedCategory,
+      email: authData?.user?.email!
     };
 
     // ✅ Validate with Zod
@@ -61,8 +63,8 @@ const Page = () => {
       email: parsed.data?.email!,
       transcribedText: parsed.data?.editedText || parsed.data?.transcribedText,
       category: parsed.data?.category!,
-      lang: language!,
-      duration: Number(duration),
+      lang: language! ?? 'not provided',
+      duration: Number(duration)! ?? 'not provided',
     };
 
     if (parsed.success) {

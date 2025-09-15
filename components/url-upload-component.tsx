@@ -8,14 +8,12 @@ import { authAtom, mp3Data, downloadMp3Atom, youtubeToMp3Atom, youtubeTranscribe
 import Image from "next/image";
 import { motion } from "framer-motion";
 import DownloadButton from "./download-mp3-button";
-import { Progress } from "./ui/progress";
 import { Loader } from "./ai-elements/loader";
-import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const UrlUploadComponent = () => {
+    const router = useRouter();
     const [data, setData] = useAtom<mp3Data>(youtubeToMp3Atom);
     const [{mutate: transcribe, isSuccess: isMutateSuccess, isPending: isMutatePending}] = useAtom(youtubeTranscribeAtom);
     const [authData,] = useAtom(authAtom);
@@ -48,11 +46,11 @@ const UrlUploadComponent = () => {
             onSuccess: (data) => {
                 if (data) {
                     setTranscribedData((prev) => ({ ...prev, ...data }));
-                    redirect('/voice/edit')
+                    router.push('/voice/edit')
                 }
             },
             onError: (error) => {
-                toast.error(error)
+                toast.error('Err in trancription..')
             }
         })
     }
@@ -96,7 +94,7 @@ const UrlUploadComponent = () => {
                 </motion.div>
             )}
 
-            {(isMutateSuccess) && (
+            {/* {(isMutateSuccess) && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-y-5">
                     <div>
                     <Label className="font-medium mb-3 text-lg">Transcribed Text</Label>
@@ -107,7 +105,7 @@ const UrlUploadComponent = () => {
                     <Textarea value={transcribedData.english} />
                     </div>
                 </motion.div>
-            )}
+            )} */}
         </div>
     );
 };
