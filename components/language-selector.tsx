@@ -24,7 +24,7 @@ const languages = {
   german: "german",
 };
 
-export function LanguageSelector({className}) {
+export function LanguageSelector({className = ''}: {className?: string}) {
   const [selectedLanguage, setSelectedLanguage] = useAtom(selectedLanguageAtom);
 
   return (

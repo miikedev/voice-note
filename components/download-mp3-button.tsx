@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAtom, useStreamMp3 } from "@/app/store";
 import { set } from "zod";
 import { slugify } from "@/app/api/youtube-to-mp3/route";
+import { Loader } from "./ai-elements/loader";
 interface DownloadButtonProps {
     downloadUrl: string;
     title: string;
@@ -51,8 +52,11 @@ export default function DownloadButton({ downloadUrl, title }: DownloadButtonPro
 
         // Combine all chunks into a Blob
         const blob = new Blob(chunks as BlobPart[]);
+
+        console.log('blob', blob)
         const blobUrl = URL.createObjectURL(blob);
 
+        console.log('blob url', blobUrl)
         // Trigger a download
         const a = document.createElement("a");
         a.href = blobUrl;
@@ -69,7 +73,7 @@ export default function DownloadButton({ downloadUrl, title }: DownloadButtonPro
             onClick={() => handleDownload(downloadUrl)}
             disabled={loading}
         >
-            {loading ? `Downloading... ${percentage}%` : "Download Mp3"}
+            {loading ? <span className="flex items-center gap-2"><Loader />{percentage}%</span> : "Download Mp3"}
         </Button>
     );
 }

@@ -4,16 +4,23 @@ import React from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useAtom } from "jotai";
-import { authAtom, mp3Data, downloadMp3Atom, youtubeToMp3Atom } from "@/app/store";
+import { authAtom, mp3Data, downloadMp3Atom, youtubeToMp3Atom, youtubeTranscribeAtom, selectedLanguageAtom, transcribedAtom } from "@/app/store";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import DownloadButton from "./download-mp3-button";
 import { Progress } from "./ui/progress";
+import { Loader } from "./ai-elements/loader";
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 const UrlUploadComponent = () => {
     const [data, setData] = useAtom<mp3Data>(youtubeToMp3Atom);
-
+    const [{mutate: transcribe, isSuccess: isMutateSuccess, isPending: isMutatePending}] = useAtom(youtubeTranscribeAtom);
     const [authData,] = useAtom(authAtom);
+    const [lang,] = useAtom(selectedLanguageAtom)
+    const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
 
     const [{ mutate, isPending, isSuccess }] = useAtom(downloadMp3Atom);
 
@@ -35,12 +42,26 @@ const UrlUploadComponent = () => {
         });
     };
 
-    const handleTranscribe = async ({ data }: { data: string }) => {
-        console.log('data in handle transcribe', data)
+    const handleTranscribe = async (url: string, lang: string) => {
+        console.log('url in handle transcribe', url, lang)
+        transcribe({url, lang},{
+            onSuccess: (data) => {
+                if (data) {
+                    setTranscribedData((prev) => ({ ...prev, ...data }));
+                    redirect('/voice/edit')
+                }
+            },
+            onError: (error) => {
+                toast.error(error)
+            }
+        })
     }
+
+    console.log('transcribe data', transcribedData)
+
     console.log('data', data)
     return (
-        <div className="flex flex-col gap-4 max-w-md mx-auto">
+        <div className="flex flex-col gap-4 max-w-md mx-auto py-3 pb-[7rem]">
             <h1 className="text-xl font-bold">Upload your YouTube URL</h1>
             <form action={handleUrlUpload} className="flex gap-2 items-center">
                 <Input
@@ -50,12 +71,12 @@ const UrlUploadComponent = () => {
                     disabled={isPending} // Disable input while loading
                 />
                 <Button type="submit" disabled={isPending}>
-                    {isPending ? "Loading..." : "Upload"}
+                    {isPending ? <Loader /> : "Upload"}
                 </Button>
             </form>
 
-            {(isSuccess && data?.title) && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="my-5 mb-[6rem] flex flex-col text-center">
+            {(data?.title) && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="my-5 mb-[4rem] flex flex-col text-center">
                     <h1 className="mb-4 font-medium"> {data?.title} </h1>
                     <div>
                         <Image
@@ -67,10 +88,23 @@ const UrlUploadComponent = () => {
                         />
                         <div className="flex gap-x-3 my-6 justify-center">
                             <DownloadButton downloadUrl={data?.linkDownload!} title={data?.title!} />
-                            <Button variant="default">
-                                transcribe (not available)
+                            <Button disabled={isMutatePending} variant="default" onClick={()=>handleTranscribe(data?.linkDownload!, lang!)}>
+                                {isMutatePending ? "Processing" : "Transcribe"}
                             </Button>
                         </div>
+                    </div>
+                </motion.div>
+            )}
+
+            {(isMutateSuccess) && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-y-5">
+                    <div>
+                    <Label className="font-medium mb-3 text-lg">Transcribed Text</Label>
+                    <Textarea value={transcribedData.transcribedText} />
+                    </div>
+                    <div>
+                    <Label className="font-medium mb-3 text-lg">Transcribed English Text</Label>
+                    <Textarea value={transcribedData.english} />
                     </div>
                 </motion.div>
             )}

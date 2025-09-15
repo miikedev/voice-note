@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
         const videoId = extractYoutubeVideoId(url);
         console.log('videoId', videoId)
         console.log('rapid api key', process.env.RAPID_API_KEY)
+
         const res = await fetch(
             `https://youtube-mp3-2025.p.rapidapi.com/v1/social/youtube/audio?id=${videoId}&quality=128kbps&ext=mp3`,
             {
@@ -37,7 +38,6 @@ export async function POST(req: NextRequest) {
         const { title, linkDownload, thumbnail } = JSON.parse(data)
 
         const thumbnailUrl = thumbnail?.thumbnails?.[thumbnail.thumbnails.length - 1]?.url || '';
-
 
         // console.log(donwload_link)
         // const mp3blob = await getMp3Blob(donwload_link);

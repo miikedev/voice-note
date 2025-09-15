@@ -101,7 +101,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-5 py-5 w-96 mx-auto">
+    <div className="flex flex-col gap-6 px-5 py-5 w-96 mx-auto pb-[8rem]">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <h1 className="text-xl font-semibold">Transcribed Text</h1>
@@ -118,7 +118,7 @@ const Page = () => {
       <div className="flex flex-col gap-2">
         <h1 className="text-xl font-semibold">Edit</h1>
         <Textarea
-          value={transcribedData?.editedText ?? transcribedData?.transcribedText}
+          value={transcribedData?.editedText || transcribedData?.transcribedText}
           onChange={handleEditChange}
           placeholder="Your edited text"
           className="shadow-xs rounded-sm font-light"

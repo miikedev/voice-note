@@ -6,6 +6,8 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
     if (!session) {
       redirect("/login"); // ✅ kick out if not logged in
+    } else {
+      redirect("/voice")
     }
 
     return (

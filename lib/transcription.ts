@@ -44,7 +44,7 @@ export async function getMp3AsBase64(audioUrl: string): Promise<string | null> {
     }
 }
 
-export async function transcribeAudio(audioBase64: string, lang: string | null, fileUri: string) {
+export async function transcribeAudio(lang: string | null, fileUri: string) {
 
     console.info('hit the transcribe audio func')
     const prompt = `
@@ -85,9 +85,10 @@ Audio Details:
     const cleanedText = text.replace(/```json\s*|\s*```/g, '');
 
     let parsedData;
-
     try {
         parsedData = JSON.parse(cleanedText);
+
+        console.log('parsed data in transcription', parsedData)
         if (!parsedData.transcribedText || !parsedData.english) {
             throw new Error('Incomplete transcription response.');
         }

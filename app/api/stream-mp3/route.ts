@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const linkDownload = searchParams.get('url') ?? '';
     const title = searchParams.get('title') ?? '';
-    console.log('download link', linkDownload)
+    console.log('download link', linkDownload);
 
     if (!linkDownload) {
         console.log('linkDownload is not provided')
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         return new NextResponse(mp3Response.body, {
             status: 200,
             headers: {
-                'Content-Type': 'audio/mpeg',
+                'Content-Type': 'audio/mp3',
                 'Content-Disposition': `attachment; filename="${filename}"`,
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'Pragma': 'no-cache',
@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
                 // NEW: Add custom headers with the additional data.
                 // We must encode the title in case it contains non-ASCII characters.
                 'X-Video-Title': encodeURIComponent(title),
-                // 'X-Video-Thumbnail': thumbnailUrl
             },
         });
     } catch (error) {

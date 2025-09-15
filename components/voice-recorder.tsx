@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Mic, StopCircle, Download, Trash2, Loader } from 'lucide-react';
+import { Mic, StopCircle } from 'lucide-react';
 import useRecorder from '@/app/hooks/useRecorder';
 import WaveformBars from './waveform-bars';
 import { authAtom, selectedDurationAtom, selectedLanguageAtom, transcribedAtom, useAtom } from '@/app/store';
@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react';
 import { LanguageSelector } from './language-selector';
 import { motion } from 'framer-motion';
+import { Loader } from './ai-elements/loader';
 const VoiceRecorder = () => {
     const { data: session } = useSession();
     const [authData, setAuthData] = useAtom(authAtom)
@@ -49,9 +50,6 @@ const VoiceRecorder = () => {
                 duration: .4
             }}
         >
-            {/* {!isProcessingVoice && <h1 className="text-2xl font-bold mb-4">Voice Recorder</h1>} */}
-            {/* Show waveform animation only while recording */}
-
             {/* Record/Stop button (only when no blob yet) */}
             {!isProcessingVoice && !recordingBlob && (
                 <div className="w-full flex flex-col items-center justify-center">
@@ -64,9 +62,7 @@ const VoiceRecorder = () => {
                     >
                         {isRecording ? <StopCircle size={45} /> : <Mic size={45} />}
                     </button>
-
                     <LanguageSelector />
-
                     <div className="h-[10rem] w-50">
                         <WaveformBars
                             barAnims={Array.from({ length: 40 }, (_, i) => randomBarAnim(i))}

@@ -41,11 +41,11 @@ export interface TranscribedData {
   _id?: string | ObjectId | undefined;
   transcribedText: string;
   english: string;
-  context: string;
-  audioUrl: string;
-  email: string;
+  context?: string;
+  audioUrl?: string;
+  email?: string;
   editedText?: string;
-  category: string | null;
+  category?: string | null;
 }
 
 const transcribedContent = {
@@ -167,6 +167,63 @@ export const DeleteVoiceNoteAtom = () => {
   })
 }
 
+export const youtubeTranscribeAtom = atomWithMutation(() => {
+  return ({
+    mutationKey: ['youtube-transcribe'],
+    mutationFn: async ({ url, lang }: { url: string, lang: string }) => {
+
+      console.log('data in mutation', url)
+
+      const res = await fetch(`/api/transcribe-blob?url=${url}&lang=${lang}`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save voice note');
+      }
+
+      const result = await res.json();
+
+      console.log(result);
+
+      // Access the readable stream
+      // const reader = res.body?.getReader();
+      // if (!reader) {
+      //   throw new Error("ReadableStream not supported in this environment");
+      // }
+
+      // const chunks: Uint8Array[] = [];
+      // let receivedLength = 0;
+
+      // while (true) {
+      //   const { done, value } = await reader.read();
+      //   if (done) break;
+
+      //   if (value) {
+      //     chunks.push(value);
+      //     receivedLength += value.length;
+
+      //     // Optionally show progress (if Content-Length is known)
+      //     const total = Number(res.headers.get("Content-Length")) || 0;
+      //     if (total) {
+      //       const percentage = Math.round((receivedLength / total) * 100);
+      //       console.log(`Progress: ${percentage}%`);
+      //     }
+      //   }
+      // }
+
+      // // Combine all chunks into a Blob
+      // const blob = new Blob(chunks as BlobPart[]);
+      // const blobUrl = URL.createObjectURL(blob);
+
+
+      // console.log(blobUrl);
+
+      return result.data;
+    },
+  })
+})
+
 const mutateVoiceNoteAtom = atomWithMutation(() => {
   return ({
     mutationKey: ['voice-notes'],
@@ -229,6 +286,7 @@ export const useStreamMp3 = atomWithMutation(() => {
     mutationKey: ['stream'],
     mutationFn: async ({ url, title }: { url: string, title: string }) => {
       console.log('data in mutation', url)
+
       const res = await fetch(`/api/stream-mp3?url=${url}&title=${title}`, {
         method: 'POST',
       });
