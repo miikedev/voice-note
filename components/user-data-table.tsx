@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, DeleteIcon, MoreHorizontal, Trash, Trash2 } from "lucide-react"
+import { ChevronDown, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -22,8 +22,6 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -35,7 +33,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { deleteUser } from "@/lib/users"
+import { deleteUser, extendExpiresAt } from "@/lib/users"
+import { formatMongoDate } from "@/lib/utils"
 
 export type User = {
     _id: string
@@ -46,24 +45,28 @@ export type User = {
 
 export const columns: ColumnDef<User>[] = [
     {
-        id: "select",
+        id: "id",
         header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
+            <div className="flex justify-start">No</div>
+            // <Checkbox
+            //     checked={
+            //         table.getIsAllPageRowsSelected() ||
+            //         (table.getIsSomePageRowsSelected() && "indeterminate")
+            //     }
+            //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            //     // aria-label="Select all"
+            // />
         ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
+        cell: ({ row }) => {
+            console.log('row',row)
+            return (
+                <h1>{Number(row.id) + 1}</h1>
+            // <Checkbox
+            //     checked={row.getIsSelected()}
+            //     onCheckedChange={(value) => row.toggleSelected(!!value)}
+            //     aria-label="Select row"
+            // />
+        )},
         enableSorting: false,
         enableHiding: false,
     },
@@ -84,7 +87,7 @@ export const columns: ColumnDef<User>[] = [
         cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
     {
-        accessorKey: "createdAt",
+        accessorKey: "expiresAt",
         header: ({ column }) => {
             console.log('column', column)
             return (
@@ -93,12 +96,12 @@ export const columns: ColumnDef<User>[] = [
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Created At
+                        Expires At
                     </Button>
                 </div>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("createdAt")}</div>,
+        cell: ({ row }) => ( <div className="lowercase">{formatMongoDate(row.getValue("expiresAt"))}</div>),
     },
     {
         id: "actions",
@@ -107,10 +110,16 @@ export const columns: ColumnDef<User>[] = [
             const user = row.original
             console.log('user in action', user)
             return (
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-x-4">
+                            <form action={extendExpiresAt}>
+                            <input type="hidden" name="userId" value={user._id} />
+                            <Button type='submit' variant="ghost" className="">
+                                Extend
+                            </Button>
+                            </form>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="">
                                 <Trash2 />
                             </Button>
                         </DropdownMenuTrigger>
@@ -218,7 +227,7 @@ export default function DataTable({ data }: { data: User[] }) {
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                            table.getRowModel().rows.map((row,) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}

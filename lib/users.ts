@@ -33,7 +33,10 @@ export const getUsers = async (): Promise<User[]> => {
             email: u.email ?? '',
             image: u.image ?? undefined,
             name: u.name ?? '',
+            createdAt: u.createdAt ?? '',
+            expiresAt: u.expiresAt ?? ''
         }));
+
     } catch (error) {
         console.error("Error retrieving users account:", error);
         throw error;
@@ -43,23 +46,68 @@ export const getUsers = async (): Promise<User[]> => {
 
 export async function createUser(formData: FormData): Promise<void> {
     "use server"
-    console.log('hit the server component')
+    console.log("hit the server component")
     try {
         const client = await clientPromise;
-        const db = client.db('voice-note');
-        const collection = db.collection('users');
-        const email = formData.get('email')
-        await collection.insertOne(
-            { email, createdAt: new Date() },
-            // { $set: { apiKey, updatedAt: new Date() } },
-            // { upsert: true }
-        );
-        revalidatePath("/dashboard/users")
+        const db = client.db("voice-note");
+        const collection = db.collection("users");
 
+        const email = formData.get("email") as string;
+        const durationDays = Number(formData.get("durationDays") || 3); // default 30 days
+        const now = new Date();
+
+        // calculate expire date
+        const expiresAt = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+
+        await collection.insertOne({
+            email,
+            createdAt: now,
+            expiresAt,          // ✅ expiration date field
+            status: "active",   // optional, easier to filter
+        });
+
+        revalidatePath("/dashboard/users");
     } catch (error) {
-        console.error('Error saving API key:', error);
-        throw new Error("Error saving API key")
-        // return { success: false, error: 'Failed to save API key' };
+        console.error("Error saving API key:", error);
+        throw new Error("Error saving API key");
+    }
+}
+
+export async function extendExpiresAt(formData: FormData): Promise<void> {
+    "use server";
+    console.log("hit the extendExpiresAt func");
+
+    try {
+        const client = await clientPromise;
+        const db = client.db("voice-note");
+        const collection = db.collection("users");
+
+        const userId = formData.get("userId")?.toString();
+
+        const extendDays = Number(formData.get("extendDays") || 30); // default +30 days
+
+        // Find user
+        const user = await collection.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Current expiresAt or now
+        const currentExpiry = user.expiresAt ? new Date(user.expiresAt) : new Date();
+
+        // Extend by given days
+        const newExpiry = new Date(currentExpiry.getTime() + extendDays * 24 * 60 * 60 * 1000);
+
+        // Update DB
+        await collection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { expiresAt: newExpiry, updatedAt: new Date() } }
+        );
+
+        revalidatePath("/dashboard/users");
+    } catch (error) {
+        console.error("Error extending expiresAt:", error);
+        throw new Error("Error extending expiresAt");
     }
 }
 
