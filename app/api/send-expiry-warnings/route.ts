@@ -46,6 +46,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
         // Send batch emails
         const response = await resend.batch.send(messages);
 
+        console.log('response', response);
+
         return NextResponse.json({ sent: messages.length, response });
     } catch (err) {
         console.error(err);
