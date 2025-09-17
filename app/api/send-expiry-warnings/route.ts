@@ -37,7 +37,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     `;
 
         const messages = usersExpiring.map(user => ({
-            from: 'Voice Note App <maungdevv@gmail.com>',
+            from: 'Acme <onboarding@resend.dev>',
             to: [user.email],
             subject,
             html,
