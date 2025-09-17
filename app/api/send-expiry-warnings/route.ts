@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next/server';
 
 import { Resend } from 'resend';
 
@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_KEY);
 
 import clientPromise from '@/lib/mongodb'; // your MongoDB client
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
     try {
         const client = await clientPromise;
         const db = client.db('voice-note');
