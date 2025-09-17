@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { Resend } from 'resend';
 
@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_KEY);
 
 import clientPromise from '@/lib/mongodb'; // your MongoDB client
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
     try {
         const client = await clientPromise;
         const db = client.db('voice-note');
@@ -24,7 +24,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
             .toArray();
 
         if (!usersExpiring.length) {
-            return res.status(200).json({ message: 'No expiring users in next 5 days.' });
+            return NextResponse.json({ error: 'No expiring users in next 5 days.' }, { status: 500 });
         }
 
         // Prepare batch messages
@@ -44,9 +44,10 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         // Send batch emails
         const response = await resend.batch.send(messages);
 
-        res.status(200).json({ sent: messages.length, response });
+        return NextResponse.json({ sent: messages.length, response });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Failed to send emails.' });
+        return NextResponse.json({ error: 'Fail to send emails.' }, { status: 500 });
+
     }
 }
