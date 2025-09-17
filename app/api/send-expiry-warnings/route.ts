@@ -23,6 +23,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
             })
             .toArray();
 
+        console.log('expiring users', usersExpiring)
+
         if (!usersExpiring.length) {
             return NextResponse.json({ error: 'No expiring users in next 5 days.' }, { status: 500 });
         }

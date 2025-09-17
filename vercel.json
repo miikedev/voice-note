@@ -1,6 +1,6 @@
 {
   "crons": [{
     "path": "/api/send-expiry-warnings",
-    "schedule": "34 12 * * *"
+    "schedule": "37 12 * * *"
   }]
 }
