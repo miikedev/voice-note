@@ -113,7 +113,7 @@ const Page = () => {
           value={transcribedData?.transcribedText || ""}
           onChange={handleTranscribedChange}
           placeholder="Your transcribed text"
-          className="shadow-xs rounded-sm font-light"
+          className="shadow-xs rounded-sm font-light h-[7rem]"
         />
       </div>
 
@@ -123,7 +123,7 @@ const Page = () => {
           value={transcribedData?.editedText || transcribedData?.transcribedText}
           onChange={handleEditChange}
           placeholder="Your edited text"
-          className="shadow-xs rounded-sm font-light"
+          className="shadow-xs rounded-sm font-light h-[7rem]"
         />
       </div>
 

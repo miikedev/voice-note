@@ -48,18 +48,26 @@ export async function transcribeAudio(lang: string | null, fileUri: string) {
 
     console.info('hit the transcribe audio func')
     const prompt = `
-You are an AI audio processing service. Your task is to transcribe the provided ${lang} audio, translate it to English, and provide a contextual analysis.
+You are an AI audio processing service.
+Your task is to transcribe the provided ${lang} audio and translate it to English. 
 
-You MUST respond ONLY with a single, strictly valid JSON object. Do not include any explanatory text before or after the JSON.
+You MUST output one and only one JSON object. 
+- No explanations
+- No markdown code fences
+- No comments
+- No trailing commas
+- No text before or after the JSON
 
-The JSON object must conform to the following schema:
+The JSON object must strictly follow this schema:
 {
-  "transcribedText": "The full transcription of the audio in ${lang}.",
-  "english": "The full English translation of the transcription.",
+  "transcribedText": "string (full transcription of the audio in ${lang})",
+  "english": "string (full English translation of the transcription)"
 }
+
 Audio Details:
 - Language: ${lang}
 - Audio Data: (base64 of audio)
+
 `;
 
     // "context": {
@@ -71,24 +79,26 @@ Audio Details:
 
     const { text } = await generateText({
         model: google('gemini-2.5-flash'),
+        maxRetries: 15,
         messages: [
             {
                 role: 'user',
                 content: [
                     { type: 'text', text: prompt },
-                    { type: 'file', mediaType: 'audio/ogg', data: fileUri },
+                    { type: 'file', mediaType: 'audio/mpeg', data: fileUri },
                 ],
             },
         ],
     });
 
-    const cleanedText = text.replace(/```json\s*|\s*```/g, '');
+
+    const cleanedText = text.trim();
+
+
 
     console.log('cleaned text', cleanedText)
-    let parsedData;
+    const parsedData = safeJsonParse(cleanedText);
     try {
-        parsedData = JSON.parse(cleanedText);
-
         console.log('parsed data in transcription', parsedData)
         if (!parsedData.transcribedText || !parsedData.english) {
             throw new Error('Incomplete transcription response.');
@@ -101,3 +111,26 @@ Audio Details:
     console.log('parsed data', parsedData)
     return parsedData;
 }
+function sanitizeAIJson(jsonString: string) {
+    // Use a regex to find a double quote that is NOT preceded by a backslash
+    // and replace it with an escaped double quote.
+    // The negative lookbehind `(?<!\\\\)` ensures we don't double-escape.
+    return jsonString.replace(/(?<!\\\\)"/g, '\\"');
+}
+
+function repairJson(jsonStr: string) {
+    return jsonStr
+        .replace(/```json|```/g, '')                 // strip fences
+        .replace(/,\s*([}\]])/g, '$1')               // remove trailing commas
+        .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":'); // quote keys
+}
+
+function safeJsonParse(str: string) {
+    try {
+        return JSON.parse(str);
+    } catch (err) {
+        console.warn("Normal parse failed:", err);
+        return JSON.parse(repairJson(str));
+    }
+}
+

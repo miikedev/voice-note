@@ -25,6 +25,7 @@ export interface User {
     image?: string;
     name: string;
 }
+
 const initialState = {
     message: null
 }
@@ -32,11 +33,10 @@ const UsersList: React.FC = async () => {
     const session = await getServerSession(authOptions)
     const users = await getUsers();
 
-
-
     return (
         <div className="container mx-auto py-10">
-            <div className='flex justify-end'>
+            <div className='flex justify-end gap-x-2'>
+                <Button>Send Mail</Button>
                 <Dialog>
                     <DialogTrigger asChild>
                         <Button variant="outline">Create</Button>

@@ -1,6 +1,6 @@
 "use client"; // this makes the component interactive (required for forms)
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useAtom } from "jotai";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 const UrlUploadComponent = () => {
     const router = useRouter();
+    const [youtubeUrl, setYoutubeUrl] =useState("")
     const [data, setData] = useAtom<mp3Data>(youtubeToMp3Atom);
     const [{mutate: transcribe, isSuccess: isMutateSuccess, isPending: isMutatePending}] = useAtom(youtubeTranscribeAtom);
     const [authData,] = useAtom(authAtom);
@@ -25,7 +26,7 @@ const UrlUploadComponent = () => {
     const handleUrlUpload = (formData: FormData): void => {
         const url = formData.get("url") as string;
         const email = authData?.user?.email!;
-
+        setYoutubeUrl(url);
         setData({ title: "", thumbnail: "", linkDownload: "" });
         mutate({
             url,
@@ -86,8 +87,8 @@ const UrlUploadComponent = () => {
                         />
                         <div className="flex gap-x-3 my-6 justify-center">
                             <DownloadButton downloadUrl={data?.linkDownload!} title={data?.title!} />
-                            <Button disabled={isMutatePending} variant="default" onClick={()=>handleTranscribe(data?.linkDownload!, lang!)}>
-                                {isMutatePending ? "Processing" : "Transcribe"}
+                            <Button disabled={isMutatePending} variant="default" onClick={()=>handleTranscribe(youtubeUrl, lang!)}>
+                                {isMutatePending ?<span className="flex items-center gap-2"><Loader />Processing</span> : "Transcribe"}
                             </Button>
                         </div>
                     </div>

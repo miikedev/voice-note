@@ -54,7 +54,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
     if (isError) return <div>An error has occurred: {error.message}</div>;
 
     return (
-        <div className="grid gap-2 md:grid-cols-2 py-3 pb-32">
+        <div className="flex flex-warp flex-col gap-y-5 py-3 pb-32">
             {/* Render notes once loading is finished */}
             {isSuccess && notes.data.length !== 0 && notes?.data.map((note: SubmittedNoteData, index: number) => (  
                 <motion.div
@@ -65,7 +65,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
                         duration: 0.35,
                         delay: index * 0.09, // 👈 staggered delay
                     }}
-                    className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative"
+                    className="p-3 border rounded-xl shadow-xs bg-white hover:shadow-sm transition relative h-auto"
                 >
                     <p className="text-md font-light mt-[2rem]">{note.transcribedText}</p>
                     {/* <Badge className="absolute right-[.5rem] top-[.5rem] bg-blue-700 text-white dark:bg-blue-600" variant="secondary">{note.category}</Badge> */}
