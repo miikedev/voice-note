@@ -1,8 +1,7 @@
 import UsersList from '@/components/users-list';
 import React from 'react';
 
-const Page = async() => {
-
+const Page = () => {
     return (
         <div>
             <h1 className='text-semibold text-lg'>User Management</h1>

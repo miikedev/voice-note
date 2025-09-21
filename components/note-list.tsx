@@ -4,25 +4,17 @@ import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is corr
 import { motion } from "framer-motion";
 import { SubmittedNoteData, useAtom, voiceNoteAtom } from "@/app/store";
 import { CategoryBadge } from "./ui/category-badge";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { deleteNote } from "@/lib/notes";
-import DeleteNoteDialog from "@/app/voice/list-server/delete-note-dialog";
 import CopyTextButton from "./copy-text-button";
 import { DeleteVoiceNoteAtom } from '@/app/store';
 
 type NoteListProps = {
     category: string;
+    isTransitionPending: boolean;
 };
 
-const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) => {
+const NoteList: React.FC<NoteListProps> = ({ category, isTransitionPending }: { category: string, isTransitionPending: boolean }) => {
 
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
@@ -32,7 +24,7 @@ const NoteList: React.FC<NoteListProps> = ({ category }: { category: string }) =
         mutate({ noteId, category })
     }
 
-    if (isPending) return (
+    if (isTransitionPending || isPending) return (
         <div className="grid gap-4 md:grid-cols-2">
             {/* Render skeletons while loading */}
             {Array.from({ length: 5 }).map((_, index) => (

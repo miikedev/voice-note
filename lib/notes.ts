@@ -64,7 +64,7 @@ export async function getNotesByEmail({ email, sortBy = 'createdAt', order, cate
         console.log("Query:", query);
 
 
-        const notes = await collection.find(query).sort({ [sortBy]: order == 'asc' ? 1 : -1 }).toArray();
+        const notes = await collection.find(query).sort({ [sortBy]: order == 'asc' ? -1 : 1 }).toArray();
 
         return notes;
     } catch (error) {

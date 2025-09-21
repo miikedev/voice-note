@@ -5,11 +5,7 @@ import { transcribeAudio } from "@/lib/transcription";
 export async function POST(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
-        const youtubeUrl = searchParams.get("youtube_url")
         const url = searchParams.get("url") ?? "";
-        const q = searchParams.get("quality") ?? "";
-        const ext = searchParams.get("ext") ?? "";
-        const token = searchParams.get("token") ?? "";
         const lang = searchParams.get("lang") ?? "";
 
         // const fetchUrl = `${url}&quality=${q}&ext=${ext}&token=${token}`;

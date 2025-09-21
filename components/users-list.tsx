@@ -1,5 +1,5 @@
 "use server"
-import { createUser, getUsers } from '@/lib/users'
+import { createUser, getExpiredUsers, getUsers } from '@/lib/users'
 import { ObjectId } from 'mongodb';
 import React from 'react'
 import DataTable from './user-data-table';
@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { sendMails } from '@/lib/mail';
 
 export interface User {
     _id: ObjectId;
@@ -30,13 +31,16 @@ const initialState = {
     message: null
 }
 const UsersList: React.FC = async () => {
-    const session = await getServerSession(authOptions)
     const users = await getUsers();
 
     return (
         <div className="container mx-auto py-10">
             <div className='flex justify-end gap-x-2'>
-                <Button>Send Mail</Button>
+                <form
+                    action={sendMails}
+                >
+                    <Button>Send Mail</Button>
+                </form>
                 <Dialog>
                     <DialogTrigger asChild>
                         <Button variant="outline">Create</Button>

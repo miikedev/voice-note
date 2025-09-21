@@ -23,7 +23,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 
         // 3. Prepare parameters for the data fetching function
         //    Type assertion for 'order' after validation/defaulting
-        const validatedOrder = (order === 'asc' || order === 'desc') ? order : 'desc';
+        const validatedOrder = (order === 'asc' || order === 'desc') ? order : 'asc';
 
         const notes = await getNotesByEmail({
             email: email,

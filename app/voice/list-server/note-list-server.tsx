@@ -23,7 +23,7 @@ const NoteListServer = async() => {
                       <DeleteNoteDialog note={note} />  
                     </div>
                   ))}
-                </div>
+        </div>
     </div>
   )
 }

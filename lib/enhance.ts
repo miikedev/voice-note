@@ -52,7 +52,7 @@ export async function enhance(inputText: string) {
 ${inputText}`
   const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY })
 
-  const { text } = streamText({
+  const { text } = await streamText({
     model: google('gemini-2.5-flash'),
     messages: [
       {
@@ -64,5 +64,5 @@ ${inputText}`
     ],
   });
 
-  return '';
+
 }

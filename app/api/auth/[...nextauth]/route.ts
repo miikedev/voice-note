@@ -92,7 +92,7 @@ export const authOptions: NextAuthOptions = {
 
                 const result = await db.collection('users').updateOne(
                     { email: profile.email },
-                    { $set: { name: profile.name, email: profile.email, image: profile.picture } }
+                    { $set: { name: profile.name, email: profile.email, image: profile.picture } },
                 );
 
                 return result.matchedCount > 0;

@@ -18,7 +18,7 @@ export const getUsers = async (): Promise<User[]> => {
     const orderDesc = true; // true for descending
 
     try {
-        const client = await clientPromise;
+        const client = clientPromise;
         const db = client.db(DB_NAME);
         const collection = db.collection(COLLECTION_NAME);
 
@@ -48,7 +48,7 @@ export async function createUser(formData: FormData): Promise<void> {
     "use server"
     console.log("hit the server component")
     try {
-        const client = await clientPromise;
+        const client = clientPromise;
         const db = client.db("voice-note");
         const collection = db.collection("users");
 
@@ -78,13 +78,13 @@ export async function extendExpiresAt(formData: FormData): Promise<void> {
     console.log("hit the extendExpiresAt func");
 
     try {
-        const client = await clientPromise;
+        const client = clientPromise;
         const db = client.db("voice-note");
         const collection = db.collection("users");
 
         const userId = formData.get("userId")?.toString();
 
-        const extendDays = Number(formData.get("extendDays") || 30); // default +30 days
+        const extendDays = Number(formData.get("extendDays") || 3); // default +30 days
 
         // Find user
         const user = await collection.findOne({ _id: new ObjectId(userId) });
@@ -119,7 +119,7 @@ export type DeleteUserResponse = {
 
 export async function deleteUser(formData: FormData): Promise<void> {
     try {
-        const client = await clientPromise;
+        const client = clientPromise;
         const db = client.db("voice-note");
         const collection = db.collection("users");
 
@@ -160,4 +160,27 @@ export async function createApiKey(email: string, apiKey: string | null) {
     );
 
     return result;
+}
+
+export async function getExpiredUsers() {
+    "use server"
+    try {
+        const client = clientPromise;
+        const db = client.db('voice-note');
+        const usersCollection = db.collection('users');
+
+        const now = new Date();
+        const fiveDaysLater = new Date();
+        fiveDaysLater.setDate(now.getDate() + 5);
+
+        // Find users whose expiresAt is in the next 5 days
+        const usersExpiring = await usersCollection
+            .find({
+                expiresAt: { $gte: now, $lte: fiveDaysLater }
+            })
+            .toArray();
+        return usersExpiring || [];
+    } catch (error) {
+        console.log(error)
+    }
 }

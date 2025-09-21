@@ -2,22 +2,6 @@ import { createGoogleGenerativeAI, google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 
 /**
- * A browser-compatible function to convert an ArrayBuffer to a base64 string.
- * @param buffer The ArrayBuffer to convert.
- * @returns The base64 encoded string.
- */
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    // btoa() is a built-in browser function to create a base-64 encoded ASCII string.
-    return window.btoa(binary);
-}
-
-/**
  * Fetches an MP3 from a URL and returns it as a base64 encoded string.
  * This version is compatible with web browsers.
  * @param audioUrl The URL of the audio file.
