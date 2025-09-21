@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from 'next-auth/react';
 import JotaiProvider from "@/components/jotai-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
             {children}
           </JotaiProvider>
         </SessionProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
