@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { signOut } from "next-auth/react";
 import { redirect } from 'next/navigation';
 import { authOptions } from '../api/auth/[...nextauth]/route';
+import LogoutButton from "@/components/logout-button";
 
 export default async function Layout({
   children,
@@ -14,10 +15,14 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  console.log('dashboard session', session);
-  if (session?.user?.email !== 'maungdevv@gmail.com') {
-    redirect("/"); // ✅ kick out if not logged in
+  const admins = (process.env.ADMINS)?.split(",") ?? ['maungdevv@gmail.com', 'zinwaiyan274@gmail.com'];
+  // check session and admin
+
+  console.log('admins', admins)
+  if (!session || !admins.includes(session.user?.email || "")) {
+    redirect("/"); // kick out if not logged in or not admin
   }
+  
   return (
     <Provider>
       <SidebarProvider>
@@ -25,12 +30,13 @@ export default async function Layout({
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Button size={"icon"} onClick={async () => {
-              "use server"
-              await signOut({ callbackUrl: "/login" })
+            {/* <Button size={"icon"} onClick={() => {
+              'use server'
+              signOut({ callbackUrl: "/login" })
             }} >
               <LogOutIcon />
-            </Button>
+            </Button> */}
+            <LogoutButton />
           </header>
           <main className="px-5">
             {children}
