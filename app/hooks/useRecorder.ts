@@ -17,6 +17,7 @@ const useRecorder = ({
     router,
     authData,
     selectedLanguage,
+    apiKey
 }: UseRecorderArgs): UseRecorderReturn => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null);
@@ -46,7 +47,7 @@ const useRecorder = ({
                 formData.append('email', authData.user.email);
                 formData.append('audio', recordedBlob, `voice-note-${Date.now()}.mp3`);
                 formData.append("lang", String(selectedLanguage));
-
+                formData.append("apiKey", apiKey);
                 try {
                     // Send the audio to your backend API
                     setIsProcessingVoice(true)

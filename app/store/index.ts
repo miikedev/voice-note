@@ -1,4 +1,5 @@
 import { deleteNote } from '@/lib/notes';
+import { getApiKey } from '@/lib/users';
 import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai'
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query'
@@ -130,42 +131,61 @@ const voiceNoteAtom = atomWithQuery((get) => {
   };
 });
 
-export const DeleteVoiceNoteAtom = () => {
-  return useMutation({
-    mutationKey: ['voice-notes'],
-    mutationFn: async ({ noteId, category }: { noteId: string, category: string }) => {
-      console.log('data in mutation', noteId)
-      const formData = new FormData();
-      formData.append('noteId', noteId)
-      // }
-      const deleted = await deleteNote(formData)
-      // const result = await res.json();
-      return { success: true, deleted };
+export const UserKeyAtom = atomWithQuery((get) => {
+  const auth = get(authAtom);
+  return {
+    queryKey: ['user-key', auth?.user?.email],
+    queryFn: async () => {
+      if (!auth?.user?.email) {
+        throw new Error("Email is not defined");
+      }
+      const res = await getApiKey(auth?.user?.email);
+
+      return res;
     },
-    onMutate: async ({ category }) => {
-      console.log('category in on mutate', category);
-      await queryClient.cancelQueries(["voice-notes", category]);
 
-      // Snapshot the previous value
-      const previousNotes = queryClient.getQueryData(["voice-notes", category]);
+  }
+})
 
-      // Optimistically update to the new value
+export const useDeleteVoiceNote = () => {
+  return useMutation({
+    mutationFn: async ({ noteId, category }: { noteId: string; category: string }) => {
+      const formData = new FormData();
+      formData.append("noteId", noteId);
+
+      const deleted = await deleteNote(formData);
+
+      return { success: true, deleted, noteId, category };
+    },
+    onMutate: async ({ noteId, category }) => {
+      console.log("onMutate fired ✅", { noteId, category });
+
+      const cancledQuery = await queryClient.cancelQueries({ queryKey: ['voice-notes', category] });
+
+      console.log('cancle query', cancledQuery)
+
+      const previousNotes = queryClient.getQueryData<any>(["voice-notes", category]);
+
+      console.log('prev notes', previousNotes)
       if (previousNotes) {
-        queryClient.setQueryData(["voice-notes", category], (oldData) => {
-          console.log('old data', oldData)
-          return {
-            ...oldData,
-            data: oldData.data.filter((note) => note._id !== id),
-          }
-        });
+        queryClient.setQueryData(["voice-notes", category], (oldData: any) => ({
+          ...oldData,
+          data: oldData.data.filter((note: any) => note._id !== noteId),
+        }));
       }
 
-      // Return a context object with the snapshotted value
       return { previousNotes };
     },
-    onSettled: ({ category }) => queryClient.invalidateQueries({ queryKey: ['voice-notes', category] }),
-  })
-}
+    onError: (err, variables, context: any) => {
+      if (context?.previousNotes) {
+        queryClient.setQueryData(["voice-notes", variables.category], context.previousNotes);
+      }
+    },
+    onSettled: (data, error, { category }) => {
+      queryClient.invalidateQueries({ queryKey: ["voice-notes", category] });
+    },
+  });
+};
 
 export const youtubeTranscribeAtom = atomWithMutation(() => {
   return ({

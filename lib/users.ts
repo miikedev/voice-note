@@ -162,6 +162,20 @@ export async function createApiKey(email: string, apiKey: string | null) {
     return result;
 }
 
+export async function getApiKey(email: string) {
+    try {
+        const client = clientPromise;
+        const db = client.db("voice-note"); // change DB name if needed
+        const collection = db.collection("user_keys");
+
+        const result = await collection.findOne({ email });
+
+        return { apiKey: result?.apiKey };
+    } catch (error) {
+        console.log('error in get api key, ', error)
+    }
+}
+
 export async function getExpiredUsers() {
     "use server"
     try {

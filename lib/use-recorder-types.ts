@@ -13,7 +13,8 @@ export interface UseRecorderArgs {
     transcribedData: string | null;
     router: AppRouterInstance;
     authData: AuthData;
-    selectedLanguage: string
+    selectedLanguage: string;
+    apiKey: string
 }
 
 export interface UseRecorderReturn {

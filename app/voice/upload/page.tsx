@@ -1,3 +1,4 @@
+'use server'
 import FileUploadComponent from '@/components/file-upload-component'
 import { LanguageSelector } from '@/components/language-selector'
 import {
@@ -10,8 +11,15 @@ import React from 'react'
 import { FileAudio } from 'lucide-react'
 import YoutubeIcon from '@/components/icons/youtube-icon'
 import UrlUploadComponent from '@/components/url-upload-component'
+import { getApiKey } from '@/lib/users'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-const Page = () => {
+const Page = async() => {
+  const session = await getServerSession(authOptions);
+  console.log('email from server session', session)
+  const result = await getApiKey(session?.user?.email!)
+  console.log('result in upload page', result)
   return (
     <div className='flex flex-col justify-center items-center w-full mt-[4rem]'>
       <div className='px-[1rem]'>
@@ -29,7 +37,7 @@ const Page = () => {
         </TabsContent>
         <TabsContent value="youtube">
         <div className='w-96 min-w-86'>
-          <UrlUploadComponent />
+          <UrlUploadComponent apiKey={result?.apiKey!} />
         </div>
         </TabsContent>
         </Tabs>

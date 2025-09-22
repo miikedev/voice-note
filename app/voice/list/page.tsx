@@ -1,9 +1,7 @@
 "use client"
-import { authAtom, selectedCategoryAtom, toggleAtom } from '@/app/store'
+import { selectedCategoryAtom, toggleAtom } from '@/app/store'
 import { CategorySelector } from '@/components/category-selector'
 import NoteList from '@/components/note-list'
-import NoteSearchInput from '@/components/note-search-input'
-import ToggleUpDownButton from '@/components/toggle-up-down-button'
 import { Toggle } from '@radix-ui/react-toggle'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAtom } from 'jotai'

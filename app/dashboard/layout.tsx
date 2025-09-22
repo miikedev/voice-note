@@ -1,10 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { Button } from "@/components/ui/button";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Provider } from 'jotai'
-import { LogOut, LogOutIcon } from "lucide-react";
 import { getServerSession } from "next-auth";
-import { signOut } from "next-auth/react";
 import { redirect } from 'next/navigation';
 import { authOptions } from '../api/auth/[...nextauth]/route';
 import LogoutButton from "@/components/logout-button";
@@ -30,12 +27,6 @@ export default async function Layout({
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            {/* <Button size={"icon"} onClick={() => {
-              'use server'
-              signOut({ callbackUrl: "/login" })
-            }} >
-              <LogOutIcon />
-            </Button> */}
             <LogoutButton />
           </header>
           <main className="px-5">

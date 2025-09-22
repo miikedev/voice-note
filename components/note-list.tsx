@@ -2,12 +2,11 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton"; // Ensure this path is correct
 import { motion } from "framer-motion";
-import { SubmittedNoteData, useAtom, voiceNoteAtom } from "@/app/store";
+import { SubmittedNoteData, useAtom, useDeleteVoiceNote, voiceNoteAtom } from "@/app/store";
 import { CategoryBadge } from "./ui/category-badge";
 import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
 import CopyTextButton from "./copy-text-button";
-import { DeleteVoiceNoteAtom } from '@/app/store';
 
 type NoteListProps = {
     category: string;
@@ -18,7 +17,7 @@ const NoteList: React.FC<NoteListProps> = ({ category, isTransitionPending }: { 
 
     const [{ data: notes, isPending, error, isError, isSuccess }] = useAtom(voiceNoteAtom)
 
-    const { mutate, isSuccess: isDeleteSuccess } = DeleteVoiceNoteAtom();
+    const { mutate, isSuccess: isDeleteSuccess } = useDeleteVoiceNote();
 
     const handleNoteDelete = (noteId: string) => {
         mutate({ noteId, category })

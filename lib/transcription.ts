@@ -28,7 +28,7 @@ export async function getMp3AsBase64(audioUrl: string): Promise<string | null> {
     }
 }
 
-export async function transcribeAudio(lang: string | null, fileUri: string) {
+export async function transcribeAudio(lang: string | null, fileUri: string, apiKey: string) {
 
     console.info('hit the transcribe audio func')
     const prompt = `
@@ -59,7 +59,7 @@ Audio Details:
     //         "sentiment": "A single word describing the overall tone (e.g., 'Neutral', 'Positive', 'Urgent', 'Frustrated').",
     //             "summary": "A 1-2 sentence summary of the key points."
     // }
-    const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY })
+    const google = createGoogleGenerativeAI({ apiKey })
 
     const { text } = await generateText({
         model: google('gemini-2.5-flash'),
@@ -75,10 +75,7 @@ Audio Details:
         ],
     });
 
-
     const cleanedText = text.trim();
-
-
 
     console.log('cleaned text', cleanedText)
     const parsedData = safeJsonParse(cleanedText);

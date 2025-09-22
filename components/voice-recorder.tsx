@@ -10,14 +10,15 @@ import { useSession } from 'next-auth/react';
 import { LanguageSelector } from './language-selector';
 import { motion } from 'framer-motion';
 import { Loader } from './ai-elements/loader';
-const VoiceRecorder = () => {
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
+const VoiceRecorder = ({apiKey}: {apiKey: string}) => {
     const { data: session } = useSession();
+    console.log('session' , session)
     const [authData, setAuthData] = useAtom(authAtom)
     const router = useRouter()
     const [selectedLanguage,] = useAtom(selectedLanguageAtom);
-
     const [transcribedData, setTranscribedData] = useAtom(transcribedAtom)
-
     useEffect(() => { if (session) setAuthData({ ...authData }) }, [])
 
     const {
@@ -28,15 +29,18 @@ const VoiceRecorder = () => {
         clearRecording,
         downloadRecording,
         isProcessingVoice,
-    } = useRecorder({ setTranscribedData, transcribedData, router, authData, selectedLanguage });
+    } = useRecorder({ setTranscribedData, transcribedData, router, authData, selectedLanguage, apiKey });
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
     const handleRecordClick = () => {
-        if (selectedLanguage) {
+        if (apiKey && selectedLanguage) {
             isRecording ? stopRecording() : startRecording()
         } else {
-            if (!selectedLanguage) {
+            if (!apiKey) {
+                toast.warning('Please upload your gemini api key');
+            }
+            else if (!selectedLanguage) {
                 toast.warning('Please select language')
             }
         }

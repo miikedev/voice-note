@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
     const audioFile = formData.get("audio") as File | null;
     const email = formData.get("email") as string | null;
     const lang = formData.get("lang") as string | null;
+    const key = formData.get("apiKey") as string | null;
 
     if (!audioFile) {
         return NextResponse.json({ error: "No audio file provided." }, { status: 400 });
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
         const audioBase64 = Buffer.from(audioBytes).toString("base64");
 
         //transcribing audio
-        const parsedData = await transcribeAudio(lang, blob.url);
+        const parsedData = await transcribeAudio(lang, blob.url, key!);
 
         console.log('parsed data', parsedData);
         // logger.info("Saving transcription to database...");
